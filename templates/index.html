@@ -1,37 +1,27 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1>Works log</h1>
+<h1></h1>
 {% if current_user.is_authenticated %}
-    <a href="jobs" class="btn btn-secondary">Добавить работу</a>
+    <div>
+         <a href="jobs" class="btn btn-secondary">Мой профиль</a>
+        <br>
+    </div>
+    <div>
+         <a href="jobs" class="btn btn-secondary">Сообщения</a>
+        <br>
+    </div>
+    <div>
+         <a href="jobs" class="btn btn-secondary">Мои друзья</a>
+        <br>
+    </div>
+    <div>
+        <a href="jobs" class="btn btn-secondary">Новости</a>
+        <br>
+    </div>
 {% endif %}
 {% for item in jobs %}
 <h2>Action #{{item.id}}</h2>
-<table class="table">
-  <thead>
-    <tr class="table-secondary">
-      <th scope="col">Title of activity</th>
-      <th scope="col">Team leader</th>
-      <th scope="col">Duration</th>
-      <th scope="col">List of coloboration</th>
-      <th scope="col">is finished</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="table-primary">{{item.job}}</td>
-      <td class="table-primary">{{item.user.surname}} {{item.user.name}}</td>
-      <td class="table-primary">{{item.work_size}} hours</td>
-      <td class="table-primary">{{item.collaborators}}</td>
-      {% if item.is_finished == False %}
-        <td class="table-danger">is not finished</td>
-      {% else %}
-        <td class="table-success">finished</td>
-      {% endif %}
-    </tr>
-  </tbody>
-</table>
-{% if current_user.is_authenticated and (current_user.id == item.user.id or current_user.id == 1) %}
+{% if current_user.is_authenticated and (current_user.id == item.user.id) %}
 <div>
   <a href="/jobs/{{ item.id }}" class="btn btn-warning">
       Edit job
