@@ -2,35 +2,17 @@
 {% block content %}
 <h1></h1>
 {% if current_user.is_authenticated %}
-    <div>
-         <a href="jobs" class="btn btn-secondary">Мой профиль</a>
-        <br>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <img src="../static/images.png" alt="..." class="rounded" width=250px>
     </div>
-    <div>
-         <a href="jobs" class="btn btn-secondary">Сообщения</a>
-        <br>
+    <div class="col-6">
+      2 из 3 (шире)
     </div>
-    <div>
-         <a href="jobs" class="btn btn-secondary">Мои друзья</a>
-        <br>
-    </div>
-    <div>
-        <a href="jobs" class="btn btn-secondary">Новости</a>
-        <br>
-    </div>
-{% endif %}
-{% for item in jobs %}
-<h2>Action #{{item.id}}</h2>
-{% if current_user.is_authenticated and (current_user.id == item.user.id) %}
-<div>
-  <a href="/jobs/{{ item.id }}" class="btn btn-warning">
-      Edit job
-  </a>
-  <a href="/jobs_delete/{{ item.id }}" class="btn btn-danger">
-      Delete job
-  </a>
-</div>
-{% endif %}
+  </div>
 
-{% endfor %}
+</div>
+
+{% endif %}
 {% endblock %}
