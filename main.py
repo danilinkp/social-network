@@ -37,6 +37,7 @@ def index():
     return render_template('index.html')
 
 
+
 @app.route('/crop', methods=['GET', 'POST'])
 def crop():
     if request.method == 'POST':
