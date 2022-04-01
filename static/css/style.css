@@ -1,3 +1,17 @@
 body {
     background-color: #666;
 }
+
+.friends__block{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.friends__block > div{
+    margin: 15px;
+}
+
+img{
+    height: 250px;
+}
