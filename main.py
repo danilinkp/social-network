@@ -74,6 +74,11 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
+@app.route('/friends')
+def friends():
+    return render_template('friends.html', title='Друзья_я')
+
+
 def main():
     app.run()
 
