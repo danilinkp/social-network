@@ -5,13 +5,42 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      <img src="../static/images.png" alt="..." class="rounded" width=250px>
-    </div>
-    <div class="col-6">
-      2 из 3 (шире)
+      <div class="profile-pic-div">
+        <form method="post" enctype="multipart/form-data">
+          <img src="image.jpg" id="photo">
+          <label data-bs-toggle="modal" data-bs-target="#exampleModal" id="uploadBtn">Choose Photo</label>
+          <script src="../static/js/app.js"></script>
+        </form>
+      </div>
+      <form method="post" enctype="multipart/form-data">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog ">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Uploading a new photo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+              </div>
+              <div class="modal-body bg-dark">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="input__wrapper col-md-8">
+                       <input type="file" name="file" id="input__file" class="input input__file" multiple>
+                       <label for="input__file" class="input__file-button bg-light">
+                          <span class="input__file-icon-wrapper"><img class="input__file-icon" src="../static/download.png" alt="Выбрать файл" width="25"></span>
+                          <span class="input__file-button-text">Select a file</span>
+                       </label>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-circle col-md-3"><i class="fa-solid fa-chevron-right"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"crossorigin="anonymous"></script>
     </div>
   </div>
-
 </div>
 
 {% endif %}

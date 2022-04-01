@@ -1,25 +1,57 @@
-from flask import Flask, render_template
+import requests
+from flask import Flask, render_template, request, session, url_for, send_from_directory
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.users import User
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
+from flask_avatars import Avatars
+import os
 
 app = Flask(__name__)
+basedir = os.path.abspath(os.path.dirname(__name__))
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
 login_manager = LoginManager()
 login_manager.init_app(app)
+avatars = Avatars(app)
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/avatars/<path:filename>')
+def get_avatar(filename):
+    return send_from_directory(app.config['AVATARS_SAVE_PATH'], filename)
+
+
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         pass
+    if request.method == 'POST':
+        f = request.files.get('file')
+        raw_filename = avatars.save_avatar(f)
+        session['raw_filename'] = raw_filename
+        return redirect(url_for('crop'))
+    return render_template('index.html')
 
-    return render_template("index.html")
+
+@app.route('/crop', methods=['GET', 'POST'])
+def crop():
+    if request.method == 'POST':
+        x = request.form.get('x')
+        y = request.form.get('y')
+        w = request.form.get('w')
+        h = request.form.get('h')
+        filenames = avatars.crop_avatar(session['raw_filename'], x, y, w, h)
+        path = os.path.join(f'{os.getcwd()}/static/avatars')
+        os.remove(path + '/' + filenames[0])
+        os.remove(path + '/' + filenames[1])
+        os.remove(path + '/' + session['raw_filename'])
+        os.rename(path + '/' + filenames[2], path + '/' + 'person.png')
+
+    return render_template('crop.html')
 
 
 @login_manager.user_loader
