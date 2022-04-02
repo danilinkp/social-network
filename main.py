@@ -31,9 +31,10 @@ def index():
 @app.route('/profile/<int:id>', methods=['GET', 'POST'])
 def profile(id):
     db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.id == 1).first()
+    # user = db_sess.query(User).filter(User.id == 1).first()
     if current_user.is_authenticated:
-        user = db_sess.query(User).filter(user.id == id).first()
+        user = db_sess.query(User).filter(User.id == id).first()
+        print(user)
         name = user.name
         about = user.about
         id = user.id
