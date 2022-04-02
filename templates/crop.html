@@ -19,6 +19,8 @@
             align: center;
 
 
+
+
         }
  </style>
 {{ avatars.crop_box('get_avatar', session['raw_filename']) }}
@@ -28,7 +30,8 @@
     <input type="hidden" id="y" name="y">
     <input type="hidden" id="w" name="w">
     <input type="hidden" id="h" name="h">
-    <input type="submit" value="Crop!">
+    <br>
+    <button type="submit" class="btn btn-success  col-md-2 "><i class="fa-solid fa-chevron-right"></i></button>
 </form>
 {{ avatars.jcrop_js() }}
 {{ avatars.init_jcrop() }}

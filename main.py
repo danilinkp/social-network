@@ -22,19 +22,27 @@ avatars = Avatars(app)
 def get_avatar(filename):
     return send_from_directory(app.config['AVATARS_SAVE_PATH'], filename)
 
-
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/index')
 def index():
+    return render_template("base.html")
+
+
+@app.route('/profile/<int:id>', methods=['GET', 'POST'])
+def profile(id):
     db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == 1).first()
     if current_user.is_authenticated:
-        pass
+        user = db_sess.query(User).filter(user.id == id).first()
+        name = user.name
+        about = user.about
+        id = user.id
     if request.method == 'POST':
         f = request.files.get('file')
         raw_filename = avatars.save_avatar(f)
         session['raw_filename'] = raw_filename
         return redirect(url_for('crop'))
-    return render_template('index.html')
+    return render_template('profile.html', name=name, about=about, id=id)
 
 
 
@@ -50,7 +58,13 @@ def crop():
         os.remove(path + '/' + filenames[0])
         os.remove(path + '/' + filenames[1])
         os.remove(path + '/' + session['raw_filename'])
-        os.rename(path + '/' + filenames[2], path + '/' + 'person.png')
+        try:
+            os.rename(path + '/' + filenames[2], path + '/' + 'person.png')
+        except Exception:
+            os.remove(path + '/' + 'person.png')
+            os.rename(path + '/' + filenames[2], path + '/' + 'person.png')
+
+        return redirect(url_for(f'profile/{current_user.id}'))
 
     return render_template('crop.html')
 
@@ -76,11 +90,13 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
+
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect("/")
+    return redirect("")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -108,7 +124,7 @@ def reqister():
 
 
 def main():
-    app.run()
+    app.run(port=8080, host='127.0.0.1')
 
 
 if __name__ == '__main__':

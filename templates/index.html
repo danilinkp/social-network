@@ -4,10 +4,10 @@
 {% if current_user.is_authenticated %}
 <div class="container">
   <div class="row">
-    <div class="col">
-      <div class="profile-pic-div">
+    <div class="col-sm-3">
+      <div class="profile-pic-div mr-3">
         <form method="post" enctype="multipart/form-data">
-          <img src="image.jpg" id="photo">
+          <img src="../static/avatars/person.png" id="photo" width="250" class="rounded mb-2 img-thumbnail">
           <label data-bs-toggle="modal" data-bs-target="#exampleModal" id="uploadBtn">Choose Photo</label>
           <script src="../static/js/app.js"></script>
         </form>
@@ -40,6 +40,9 @@
       </form>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"crossorigin="anonymous"></script>
     </div>
+
+
+  </div>
   </div>
 </div>
 
