@@ -1,8 +1,10 @@
-body {
-    background-color: #666;
+html body {
+    background-color: #22272e;
 }
 
 .friends__block{
+    margin-left: auto;
+    margin-right: auto;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -12,6 +14,59 @@ body {
     margin: 15px;
 }
 
-img{
-    height: 250px;
+
+.card {
+    width: 400px;
+    border-radius: 10px;
+    background-color: #9d331f;
+}
+
+.stats {
+    background: #f2f5f8;
+    color: #000
+}
+
+.articles {
+    font-size: 10px;
+    color: #a1aab9
+}
+
+.number1 {
+    font-weight: 500
+}
+
+.followers {
+    font-size: 10px;
+    color: #a1aab9
+}
+
+.number2 {
+    font-weight: 500
+}
+
+.rating {
+    font-size: 10px;
+    color: #a1aab9
+}
+
+.number3 {
+    font-weight: 500
+}
+
+.object__block{
+    display: flex;
+    align-items: center;
+}
+
+.object__block > div{
+    margin: 3px;
+}
+
+.buttons__block {
+    display: flex;
+    text-align: flex-start;
+}
+
+.buttons__block > button{
+    margin: 5px;
 }

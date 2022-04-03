@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
+from data.friends import Friend
 from data.users import User
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
@@ -76,7 +77,10 @@ def reqister():
 
 @app.route('/friends')
 def friends():
-    return render_template('friends.html', title='Друзья_я')
+    db_sess = db_session.create_session()
+    all_users = db_sess.query(User).all()
+    friends = db_sess.query(Friend).all()
+    return render_template('friends.html', title='Friends', users=all_users, friends=friends)
 
 
 def main():
