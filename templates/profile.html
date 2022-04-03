@@ -143,49 +143,51 @@
              {% endif %}
              <div>
              <ul class="timeline">
-                <li>
-                   <!-- begin timeline-time -->
-                   {% for item in posts%}
-                       <div class="timeline-time">
-                          <span class="time">{{item.created_date.strftime('%d %B %Y')}}</span>
+                {% for item in posts|reverse%}
+                    <li>
+                       <!-- begin timeline-time -->
 
-                       </div>
-                       <div class="timeline-icon">
-                          <a href="javascript:;">{{name}};</a>
-                       </div>
-                       <div class="timeline-body">
-                          <div class="timeline-header">
+                           <div class="timeline-time">
+                              <span class="time">{{item.created_date.strftime('%d %B %Y')}}</span>
 
-                             <span class="userimage"><img src="../static/avatars/{{image}}" alt=""></span>
-                             <span class="username"><a href="javascript:;"></a> <small></small></span>
-                             <span class="pull-right text-muted">18 Views</span>
-                          </div>
-                          <div class="timeline-content">
-                             <p>
-                                <img src="../static/post_image/{{item.image}}" alt="">
-                                 {{item.content}}
-                             </p>
-                          </div>
-                          <div class="timeline-likes">
-                             <div class="stats">
-                                <span class="fa-stack fa-fw stats-icon">
-                                <i class="fa fa-circle fa-stack-2x text-danger"></i>
-                                <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
-                                </span>
-                                <span class="fa-stack fa-fw stats-icon">
-                                <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                                <i class="fa fa-thumbs-up fa-stack-1x fa-inverse"></i>
-                                </span>
-                                <span class="stats-total">4.3k</span>
-                             </div>
-                          </div>
-                          <div class="timeline-footer">
-                             <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i class="fa fa-thumbs-up fa-fw fa-lg m-r-3"></i> Like</a>
-                          </div>
-                       </div>
-                   {% endfor %}
-                </li>
+                           </div>
+                           <div class="timeline-icon">
+                              <a href="javascript:;"></a>
+                           </div>
+                           <div class="timeline-body">
+                              <div class="timeline-header">
 
+                                 <span class="userimage"><img src="../static/avatars/{{image}}" alt=""></span>
+                                 <span class="username">{{name}}</span>
+                                 <span class="pull-right text-muted">18 Views</span>
+                              </div>
+                              <div class="timeline-content">
+                                 <p>
+                                    <img src="../static/post_image/{{item.image}}" alt="">
+                                     {{item.content}}
+                                 </p>
+                              </div>
+                              <div class="timeline-likes">
+                                 <div class="stats">
+                                    <span class="fa-stack fa-fw stats-icon">
+                                    <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                                    <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
+                                    </span>
+                                    <span class="fa-stack fa-fw stats-icon">
+                                    <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                                    <i class="fa fa-thumbs-up fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                    <span class="stats-total">4.3k</span>
+                                 </div>
+                              </div>
+                              <div class="timeline-footer">
+                                 <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i class="fa fa-thumbs-up fa-fw fa-lg m-r-3"></i> Like</a>
+                              </div>
+                           </div>
+                            <br>
+
+                    </li>
+                {% endfor %}
              </ul>
                      <!-- end timeline -->
 

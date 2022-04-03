@@ -39,6 +39,9 @@ def profile(name):
         name = user.name
         about = user.about
         id = user.id
+        posts = db_sess.query(Posts).filter(current_user.id == Posts.user_id)
+    else:
+        return redirect(f'/base')
     if request.method == 'POST':
         data = request.form
         try:
@@ -48,9 +51,9 @@ def profile(name):
                 if not str(request.files['file1']).split()[1] == "''":
                     app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/post_image')
                     raw_filename = avatars.save_avatar(data['file1'])
-                posts = Posts(content=request.form['about'],
+                posts1 = Posts(content=request.form['about'],
                               user_id=current_user.id, image=raw_filename)
-                db_sess.add(posts)
+                db_sess.add(posts1)
                 db_sess.commit()
         except Exception:
             if not str(request.files['file3']).split()[1] == "''":
@@ -60,7 +63,6 @@ def profile(name):
                 raw_filename = avatars.save_avatar(f)
                 session['raw_filename'] = raw_filename
                 return redirect(url_for('crop'))
-    posts = db_sess.query(Posts).filter(current_user.id == Posts.user_id)
 
     return render_template('profile.html', name=name, about=about, id=id, posts=posts)
 
