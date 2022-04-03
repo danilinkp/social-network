@@ -8,10 +8,14 @@
                 <div class="card-body">
                   <div class="d-flex flex-column align-items-center text-center">
                     <div class="profile-pic-div mr-3">
+
                       <form method="post" enctype="multipart/form-data">
                         <img src="../static/avatars/person.png" id="photo" width="250" class="rounded mb-2 img-thumbnail" data-bs-toggle="modal" data-bs-target="#exampleModal" >
-                        <label data-bs-toggle="modal" data-bs-target="#exampleModal" id="uploadBtn">Choose Photo</label>
-                        <script src="../static/js/app.js"></script>
+                        {% if current_user.is_authenticated and (current_user.id == id) %}
+                          <label data-bs-toggle="modal" data-bs-target="#exampleModal" id="uploadBtn">Choose Photo</label>
+
+                          <script src="../static/js/app.js"></script>
+                        {% endif %}
                       </form>
                     </div>
                     <form method="post" enctype="multipart/form-data">
@@ -26,7 +30,7 @@
                               <div class="container-fluid">
                                 <div class="row">
                                   <div class="input__wrapper col-md-8">
-                                     <input type="file" name="file" id="input__file" class="input input__file" multiple>
+                                     <input type="file" name="file3" id="input__file" class="input input__file" multiple>
                                      <label for="input__file" class="input__file-button bg-light">
                                         <span class="input__file-icon-wrapper"><img class="input__file-icon" src="../static/download.png" alt="Выбрать файл" width="25"></span>
                                         <span class="input__file-button-text">Select a file</span>
@@ -40,11 +44,12 @@
                         </div>
                       </div>
                     </form>
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
                     <div class="mt-3">
                       <h4>{{name}}</h4>
                       {% if current_user.is_authenticated and (current_user.id == id) %}
-                        <button class="btn btn-primary">Edit</button>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="">Edit</button>
+
 
                       {% else %}
                         <button class="btn btn-primary">Follow</button>
@@ -99,50 +104,89 @@
                 </div>
               </div>
              <!-- begin timeline -->
-                     <ul class="timeline">
-                        <li>
-                           <!-- begin timeline-time -->
-                           <div class="timeline-time">
-                              <span class="date">today</span>
-                              <span class="time">04:20</span>
-                           </div>
-                           <div class="timeline-icon">
-                              <a href="javascript:;">&nbsp;</a>
-                           </div>
-                           <div class="timeline-body">
-                              <div class="timeline-header">
-                                 <span class="userimage"><img src="../static/avatars/person.png" alt=""></span>
-                                 <span class="username"><a href="javascript:;">khairullovruslan</a> <small></small></span>
-                                 <span class="pull-right text-muted">18 Views</span>
-                              </div>
-                              <div class="timeline-content">
-                                 <p>
-                                    <img src="../static/post.jpeg" alt="">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc faucibus turpis quis tincidunt luctus.
-                                    Nam sagittis dui in nunc consequat, in imperdiet nunc sagittis.
-                                 </p>
-                              </div>
-                              <div class="timeline-likes">
-                                 <div class="stats">
-                                    <span class="fa-stack fa-fw stats-icon">
-                                    <i class="fa fa-circle fa-stack-2x text-danger"></i>
-                                    <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
-                                    </span>
-                                    <span class="fa-stack fa-fw stats-icon">
-                                    <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                                    <i class="fa fa-thumbs-up fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                    <span class="stats-total">4.3k</span>
-                                 </div>
-                              </div>
-                              <div class="timeline-footer">
-                                 <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i class="fa fa-thumbs-up fa-fw fa-lg m-r-3"></i> Like</a>
-                              </div>
-                           </div>
-                           <!-- end timeline-body -->
-                        </li>
 
-                     </ul>
+             {% if current_user.is_authenticated and (current_user.id == id) %}
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1">New post</button>
+                <br>
+                <form method="post" enctype="multipart/form-data">
+                      <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+                        <div class="modal-dialog ">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel1">Uploading a new photo</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            </div>
+                            <div class="modal-body bg-dark">
+                              <div class="container-fluid">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <textarea class="form-control" id="about" rows="3" name="about"></textarea>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                  <div class="input__wrapper col-md-8">
+                                     <div class="form-group">
+
+                                        <input type="file" class="form-control-file" id="photo1" name="file1">
+                                     </div>
+                                  </div>
+                                  <button type="submit" class="btn btn-success btn-circle col-md-3"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+             {% endif %}
+             <div>
+             <ul class="timeline">
+                <li>
+                   <!-- begin timeline-time -->
+                   {% for item in posts%}
+                       <div class="timeline-time">
+                          <span class="time">{{item.created_date.strftime('%d %B %Y')}}</span>
+
+                       </div>
+                       <div class="timeline-icon">
+                          <a href="javascript:;">{{name}};</a>
+                       </div>
+                       <div class="timeline-body">
+                          <div class="timeline-header">
+
+                             <span class="userimage"><img src="../static/avatars/{{image}}" alt=""></span>
+                             <span class="username"><a href="javascript:;"></a> <small></small></span>
+                             <span class="pull-right text-muted">18 Views</span>
+                          </div>
+                          <div class="timeline-content">
+                             <p>
+                                <img src="../static/post_image/{{item.image}}" alt="">
+                                 {{item.content}}
+                             </p>
+                          </div>
+                          <div class="timeline-likes">
+                             <div class="stats">
+                                <span class="fa-stack fa-fw stats-icon">
+                                <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                                <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
+                                </span>
+                                <span class="fa-stack fa-fw stats-icon">
+                                <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                                <i class="fa fa-thumbs-up fa-stack-1x fa-inverse"></i>
+                                </span>
+                                <span class="stats-total">4.3k</span>
+                             </div>
+                          </div>
+                          <div class="timeline-footer">
+                             <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i class="fa fa-thumbs-up fa-fw fa-lg m-r-3"></i> Like</a>
+                          </div>
+                       </div>
+                   {% endfor %}
+                </li>
+
+             </ul>
                      <!-- end timeline -->
 
 
@@ -150,4 +194,5 @@
 
            </div>
    </div>
+ </div>
 {% endblock %}

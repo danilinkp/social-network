@@ -3,8 +3,10 @@ from flask import Flask, render_template, request, session, url_for, send_from_d
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
+from data.posts import Posts
 from data.users import User
 from forms.loginform import LoginForm
+from forms.post import PostsForm
 from forms.user import RegisterForm
 from flask_avatars import Avatars
 import os
@@ -28,22 +30,39 @@ def index():
     return render_template("base.html")
 
 
-@app.route('/profile/<int:id>', methods=['GET', 'POST'])
-def profile(id):
+@app.route('/profile/<string:name>', methods=['GET', 'POST'])
+def profile(name):
     db_sess = db_session.create_session()
-    # user = db_sess.query(User).filter(User.id == 1).first()
+
     if current_user.is_authenticated:
-        user = db_sess.query(User).filter(User.id == id).first()
-        print(user)
+        user = db_sess.query(User).filter(User.name == name).first()
         name = user.name
         about = user.about
         id = user.id
     if request.method == 'POST':
-        f = request.files.get('file')
-        raw_filename = avatars.save_avatar(f)
-        session['raw_filename'] = raw_filename
-        return redirect(url_for('crop'))
-    return render_template('profile.html', name=name, about=about, id=id)
+        data = request.form
+        try:
+            if request.form['about'] or not str(request.files['file1']).split()[1] == "''":
+                data = request.files
+                raw_filename = ''
+                if not str(request.files['file1']).split()[1] == "''":
+                    app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/post_image')
+                    raw_filename = avatars.save_avatar(data['file1'])
+                posts = Posts(content=request.form['about'],
+                              user_id=current_user.id, image=raw_filename)
+                db_sess.add(posts)
+                db_sess.commit()
+        except Exception:
+            if not str(request.files['file3']).split()[1] == "''":
+                f = request.files.get('file3')
+                print(f)
+                app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
+                raw_filename = avatars.save_avatar(f)
+                session['raw_filename'] = raw_filename
+                return redirect(url_for('crop'))
+    posts = db_sess.query(Posts).filter(current_user.id == Posts.user_id)
+
+    return render_template('profile.html', name=name, about=about, id=id, posts=posts)
 
 
 
@@ -60,12 +79,12 @@ def crop():
         os.remove(path + '/' + filenames[1])
         os.remove(path + '/' + session['raw_filename'])
         try:
-            os.rename(path + '/' + filenames[2], path + '/' + 'person.png')
+            os.rename(path + '/' + filenames[2], path + '/' + current_user.name)
         except Exception:
-            os.remove(path + '/' + 'person.png')
-            os.rename(path + '/' + filenames[2], path + '/' + 'person.png')
+            os.remove(path + '/' + current_user.name)
+            os.rename(path + '/' + filenames[2], path + '/' + current_user.name)
 
-        return redirect(url_for(f'profile/{current_user.id}'))
+        return redirect(f'/profile/{current_user.name}')
 
     return render_template('crop.html')
 
@@ -122,6 +141,7 @@ def reqister():
         db_sess.commit()
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
+
 
 
 def main():

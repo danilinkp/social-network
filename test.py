@@ -1,2 +1,5 @@
-from hashlib import md5
-print('https://www.gravatar.com/avatar/' + md5(b'khairulov.ruslan@gmail.com').hexdigest())
+import datetime
+
+print(f'{datetime.datetime.now().hour}:{datetime.datetime.now().minute}')
+
+print(f'{datetime.datetime.now().day} {datetime.datetime.now().strftime("%b")} {datetime.datetime.now().year}')
