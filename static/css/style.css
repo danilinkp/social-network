@@ -55,7 +55,7 @@ background-color: black;
   margin: 15px 0;
   text-align: center;
 }
-
+.form-control-file,
 .input__file {
   opacity: 0;
   visibility: hidden;

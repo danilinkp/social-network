@@ -10,7 +10,7 @@
                     <div class="profile-pic-div mr-3">
 
                       <form method="post" enctype="multipart/form-data">
-                        <img src="../static/avatars/person.png" id="photo" width="250" class="rounded mb-2 img-thumbnail" data-bs-toggle="modal" data-bs-target="#exampleModal" >
+                        <img src="../static/avatars/{{image}}" id="photo" width="250" class="rounded mb-2 img-thumbnail" data-bs-toggle="modal" data-bs-target="#exampleModal" >
                         {% if current_user.is_authenticated and (current_user.id == id) %}
                           <label data-bs-toggle="modal" data-bs-target="#exampleModal" id="uploadBtn">Choose Photo</label>
 
@@ -129,6 +129,10 @@
                                      <div class="form-group">
 
                                         <input type="file" class="form-control-file" id="photo1" name="file1">
+                                        <label for="photo1" class="input__file-button bg-light">
+                                            <span class="input__file-icon-wrapper"><img class="input__file-icon" src="../static/download.png" alt="Выбрать файл" width="25"></span>
+                                            <span class="input__file-button-text">Select a file</span>
+                                        </label>
                                      </div>
                                   </div>
                                   <button type="submit" class="btn btn-success btn-circle col-md-3"><i class="fa-solid fa-chevron-right"></i></button>
@@ -149,6 +153,7 @@
 
                            <div class="timeline-time">
                               <span class="time">{{item.created_date.strftime('%d %B %Y')}}</span>
+                              <span class="time">{{item.created_date.strftime('%H:%M')}}</span>
 
                            </div>
                            <div class="timeline-icon">
@@ -156,7 +161,6 @@
                            </div>
                            <div class="timeline-body">
                               <div class="timeline-header">
-
                                  <span class="userimage"><img src="../static/avatars/{{image}}" alt=""></span>
                                  <span class="username">{{name}}</span>
                                  <span class="pull-right text-muted">18 Views</span>

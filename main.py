@@ -14,6 +14,7 @@ import os
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__name__))
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+app.config['AVATARS_SIZE_TUPLE'] = (30, 60, 250)
 app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -37,9 +38,10 @@ def profile(name):
     if current_user.is_authenticated:
         user = db_sess.query(User).filter(User.name == name).first()
         name = user.name
+        image = user.image
         about = user.about
         id = user.id
-        posts = db_sess.query(Posts).filter(current_user.id == Posts.user_id)
+        posts = db_sess.query(Posts).filter(user.id == Posts.user_id)
     else:
         return redirect(f'/base')
     if request.method == 'POST':
@@ -64,7 +66,7 @@ def profile(name):
                 session['raw_filename'] = raw_filename
                 return redirect(url_for('crop'))
 
-    return render_template('profile.html', name=name, about=about, id=id, posts=posts)
+    return render_template('profile.html', name=name, about=about, id=id, posts=posts, image=image)
 
 
 
@@ -81,10 +83,20 @@ def crop():
         os.remove(path + '/' + filenames[1])
         os.remove(path + '/' + session['raw_filename'])
         try:
-            os.rename(path + '/' + filenames[2], path + '/' + current_user.name)
+            os.rename(path + '/' + filenames[2], path + '/' + current_user.name + '.jpg')
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.id == current_user.id,
+                                              ).first()
+            user.image = current_user.name + '.jpg'
+            db_sess.commit()
         except Exception:
-            os.remove(path + '/' + current_user.name)
-            os.rename(path + '/' + filenames[2], path + '/' + current_user.name)
+            os.remove(path + '/' + current_user.name + '.jpg')
+            os.rename(path + '/' + filenames[2], path + '/' + current_user.name + '.jpg')
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.id == current_user.id,
+                                              ).first()
+            user.image = current_user.name + '.jpg'
+            db_sess.commit()
 
         return redirect(f'/profile/{current_user.name}')
 
