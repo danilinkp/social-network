@@ -78,18 +78,18 @@ def reqister():
 
 @app.route('/friends', methods=['GET', 'POST'])
 def friends():
+    db_sess = db_session.create_session()
+    form = FriendsSearchForm()
     if request.method == 'POST':
         data = request.form
-        print(data)
-    form = FriendsSearchForm()
-    db_sess = db_session.create_session()
-    if form.validate_on_submit():
-        users = db_sess.query(User).filter(User.name == form.search.data).all()
-        friends = db_sess.query(Friend).filter(Friend.name == form.search.data).all()
+        input_name = data['friends_search']
+        users = db_sess.query(User).filter(User.name == input_name).all()
+        friends = db_sess.query(Friend).filter(Friend.name == input_name).all()
+
     else:
-        all_users = db_sess.query(User).all()
+        users = db_sess.query(User).all()
         friends = db_sess.query(Friend).all()
-        return render_template('friends.html', title='Friends', users=all_users, friends=friends, form=form)
+    return render_template('friends.html', title='Friends', users=users, friends=friends, form=form)
 
 
 def main():
