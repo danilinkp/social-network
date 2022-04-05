@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="input__block" style="margin-left: auto; margin-right: auto; max-width: 700px;">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Write you friend's nickname" aria-label="Write you friend's nickname" aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+    <form method="post" enctype="multipart/form-data">
+        <div class="input__block" style="margin-left: auto; margin-right: auto; max-width: 700px;">
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="friends_search" placeholder="Write your friend's name" aria-label="Write your friend's name" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+                </div>
+            </div>
         </div>
-    </div>
+    </form>
 
     {% if not friends %}
         <div class="friends__block">
@@ -47,4 +51,5 @@
             {% endfor %}
         </div>
     {% endif%}
+
 {% endblock %}

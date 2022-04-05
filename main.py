@@ -1,9 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.friends import Friend
 from data.users import User
+from forms.friends_search_form import FriendsSearchForm
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
 
@@ -75,12 +76,20 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-@app.route('/friends')
+@app.route('/friends', methods=['GET', 'POST'])
 def friends():
+    if request.method == 'POST':
+        data = request.form
+        print(data)
+    form = FriendsSearchForm()
     db_sess = db_session.create_session()
-    all_users = db_sess.query(User).all()
-    friends = db_sess.query(Friend).all()
-    return render_template('friends.html', title='Friends', users=all_users, friends=friends)
+    if form.validate_on_submit():
+        users = db_sess.query(User).filter(User.name == form.search.data).all()
+        friends = db_sess.query(Friend).filter(Friend.name == form.search.data).all()
+    else:
+        all_users = db_sess.query(User).all()
+        friends = db_sess.query(Friend).all()
+        return render_template('friends.html', title='Friends', users=all_users, friends=friends, form=form)
 
 
 def main():
