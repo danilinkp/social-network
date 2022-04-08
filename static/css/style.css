@@ -342,6 +342,11 @@ body {
     color: #2d353c
 }
 
+.timeline-header .dropdown-edit {
+    position: fixed;
+    margin-left: 300px;
+
+}
 .timeline img {
     max-width: 100%;
     display: block
@@ -444,3 +449,4 @@ body {
 .text-danger, .text-red {
     color: #ff5b57!important;
 }
+
