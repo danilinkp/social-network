@@ -120,15 +120,15 @@
         <!-- begin timeline -->
 
         {% if current_user.is_authenticated and (current_user.id == id) %}
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1">New post</button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalpost">New post</button>
         <br>
         <form method="post" enctype="multipart/form-data">
-            <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1"
+            <div class="modal fade" id="exampleModalpost" tabindex="-1" aria-labelledby="exampleModalLabelpost"
                  aria-hidden="true">
                 <div class="modal-dialog ">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel1">Uploading a new photo</h5>
+                            <h5 class="modal-title" id="exampleModalLabelpost">Uploading a new photo</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Закрыть"></button>
                         </div>
@@ -136,7 +136,7 @@
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="form-group">
-                                        <textarea class="form-control" id="about" rows="3" name="about"></textarea>
+                                        <textarea class="form-control" id="about1" rows="3" name="about"></textarea>
                                     </div>
                                 </div>
                                 <br>
@@ -144,8 +144,8 @@
                                     <div class="input__wrapper col-md-8">
                                         <div class="form-group">
 
-                                            <input type="file" class="form-control-file" id="photo1" name="file1">
-                                            <label for="photo1" class="input__file-button bg-light">
+                                            <input type="file" class="form-control-file" id="photo2" name="file1">
+                                            <label for="photo2" class="input__file-button bg-light">
                                                 <span class="input__file-icon-wrapper"><img class="input__file-icon"
                                                                                             src="../static/download.png"
                                                                                             alt="Выбрать файл"
@@ -163,12 +163,85 @@
                 </div>
             </div>
         </form>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-                crossorigin="anonymous"></script>
+
+
         {% endif %}
         <div>
             <ul class="timeline">
                 {% for item in posts|reverse%}
+                <form method="post" enctype="multipart/form-data">
+                    <div class="modal fade" id="exampleModal{{item.id}}" tabindex="-1" aria-labelledby="exampleModalLabel{{item.id}}"
+                         aria-hidden="true">
+                        <div class="modal-dialog ">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel{{item.id}}">Editing</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Закрыть"></button>
+                                </div>
+                                <div class="modal-body bg-dark">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <textarea class="form-control" id="about" rows="3" name="about-{{item.id}}">{{item.content}}</textarea>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
+                                            <div class="input__wrapper col-md-8">
+                                                <div class="form-group">
+
+                                                    <input type="file" class="form-control-file" id="photo1" name="file-{{item.id}}">
+                                                    <label for="photo1" class="input__file-button bg-light">
+                                                        <span class="input__file-icon-wrapper"><img class="input__file-icon"
+                                                                                                    src="../static/download.png"
+                                                                                                    alt="Выбрать файл"
+                                                                                                    width="25"></span>
+                                                        <span class="input__file-button-text">Select a file</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-success btn-circle col-md-3"><i
+                                                    class="fa-solid fa-chevron-right"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                 <form method="post" enctype="multipart/form-data">
+                    <div class="modal fade" id="exampleModal-{{item.id}}" tabindex="-1" aria-labelledby="exampleModal-Label{{item.id}}"
+                         aria-hidden="true">
+                        <div class="modal-dialog ">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModal-Label{{item.id}}">Deletion</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Закрыть"></button>
+                                </div>
+                                <div class="modal-body bg-dark">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                           <span style="color: white;">Are you sure you want to delete the post?</span>
+                                            <br>
+                                           <span style="color: white;">If you delete a post, you won't be able to get it back.</span>
+                                        </div>
+                                        <br>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" name='delete_agree-{{item.id}}' class="form-check-input" id="exampleCheck1" required>
+                                            <label class="form-check-label" style="color: green;" for="exampleCheck1">I agree</label>
+                                        </div>
+                                        <div class="row">
+
+                                            <button type="submit" class="btn btn-danger btn-circle"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
                 <li>
 
                     <div class="timeline-time">
@@ -192,9 +265,9 @@
                                      data-bs-toggle="dropdown" aria-expanded="false"><i
                                           class="fa-solid fa-ellipsis-vertical"></i></a>
                                   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#">Действие</a></li>
-                                    <li><a class="dropdown-item" href="#">Другое действие</a></li>
-                                    <li><a class="dropdown-item" href="#">Что-то еще здесь</a></li>
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal{{item.id}}" type="button">Редактировать</a></li>
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal-{{item.id}}" type="button">Удалить</a></li>
+
                                   </ul>
 
 
@@ -243,6 +316,8 @@
 
 
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+                        crossorigin="anonymous"></script>
     </div>
 </div>
 {% endblock %}

@@ -25,6 +25,7 @@ avatars = Avatars(app)
 def get_avatar(filename):
     return send_from_directory(app.config['AVATARS_SAVE_PATH'], filename)
 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -45,16 +46,69 @@ def profile(name):
     else:
         return redirect(f'/base')
     if request.method == 'POST':
-        data = request.form
+        data = dict(request.form)
+        keys = list(data.keys())[0]
+        try:
+            image_dict = dict(request.files)
+            keys_image = list(image_dict.keys())[0]
+        except Exception:
+            pass
+        if 'delete_agree' in keys:
+            id2 = keys.split('-')[-1]
+            db_sess = db_session.create_session()
+            posts = db_sess.query(Posts).filter((Posts.id == id2),
+                                                Posts.user == current_user).first()
+            if posts.image:
+                path = os.path.join(f'{os.getcwd()}/static/post_image')
+                os.remove(path + '/' + posts.image)
+            if posts:
+                db_sess.delete(posts)
+                db_sess.commit()
+            return redirect(f'/profile/{current_user.name}')
+
+        if (keys != 'about' and 'about' in keys) or (
+                not str(request.files[keys_image]).split()[1] == "''" and 'file-' in keys_image):
+            about = data[keys]
+            id = keys.split('-')[1]
+            db_sess = db_session.create_session()
+
+            posts = db_sess.query(Posts).filter(Posts.id == id,
+                                                Posts.user_id == current_user.id
+                                                ).first()
+            if not str(request.files[keys_image]).split()[1] == "''":
+                try:
+                    if not posts.image:
+                        print(1)
+                        app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/post_image')
+                        image = avatars.save_avatar(image_dict[keys_image])
+
+                    else:
+                        print(2)
+                        path = os.path.join(f'{os.getcwd()}/static/post_image')
+                        os.remove(path + '/' + posts.image)
+                        app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/post_image')
+                        print(image_dict[keys_image])
+                        image = avatars.save_avatar(image_dict[keys_image])
+                except Exception:
+                    image = posts.image
+            else:
+                image = posts.image
+
+            if posts:
+                posts.content = about
+                posts.image = image
+                db_sess.commit()
+                return redirect(f'/profile/{current_user.name}')
         try:
             if request.form['about'] or not str(request.files['file1']).split()[1] == "''":
                 data = request.files
                 raw_filename = ''
-                if not str(request.files['file1']).split()[1] == "''":
+                if keys_image == 'file1':
                     app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/post_image')
-                    raw_filename = avatars.save_avatar(data['file1'])
+
+                    raw_filename = avatars.save_avatar(image_dict[keys_image])
                 posts1 = Posts(content=request.form['about'],
-                              user_id=current_user.id, image=raw_filename)
+                               user_id=current_user.id, image=raw_filename)
                 db_sess.add(posts1)
                 db_sess.commit()
         except Exception:
@@ -67,7 +121,6 @@ def profile(name):
                 return redirect(url_for('crop'))
 
     return render_template('profile.html', name=name, about=about, id=id, posts=posts, image=image)
-
 
 
 @app.route('/crop', methods=['GET', 'POST'])
@@ -124,8 +177,6 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -157,9 +208,8 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-
 def main():
-    app.run(port=8081, host='127.0.0.1')
+    app.run(port=8080, host='127.0.0.1')
 
 
 if __name__ == '__main__':
