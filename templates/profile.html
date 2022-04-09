@@ -10,15 +10,17 @@
                     <div class="profile-pic-div mr-3">
 
                         <form method="post" enctype="multipart/form-data">
-                            <img src="../static/avatars/{{image}}" id="photo" width="250"
-                                 class="rounded mb-2 img-thumbnail" data-bs-toggle="modal"
-                                 data-bs-target="#exampleModal">
-                            {% if current_user.is_authenticated and (current_user.id == id) %}
-                            <label data-bs-toggle="modal" data-bs-target="#exampleModal" id="uploadBtn">Choose
-                                Photo</label>
+                            <div class="avatar__profile">
+                                <img src="../static/avatars/{{image}}" id="photo" width="250"
+                                     class="rounded mb-2 img-thumbnail" data-bs-toggle="modal"
+                                     data-bs-target="#exampleModal">
+                                {% if current_user.is_authenticated and (current_user.id == id) %}
+                                <label data-bs-toggle="modal" data-bs-target="#exampleModal" id="uploadBtn">Choose
+                                    Photo</label>
 
-                            <script src="../static/js/app.js"></script>
-                            {% endif %}
+                                <script src="../static/js/app.js"></script>
+                                {% endif %}
+                            </div>
                         </form>
                     </div>
                     <form method="post" enctype="multipart/form-data">

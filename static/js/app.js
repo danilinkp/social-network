@@ -1,4 +1,4 @@
-const imgDiv = document.querySelector('.d-flex .profile-pic-div');
+const imgDiv = document.querySelector('.avatar__profile');
 
 imgDiv.addEventListener('mouseenter', function(){
     uploadBtn.style.display = "block";

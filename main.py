@@ -208,6 +208,13 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
+@app.route('/news')
+def news():
+    db_sess = db_session.create_session()
+    users = db_sess.query(User).all()
+    return render_template('news.html', title='News', users=users)
+
+
 def main():
     app.run(port=8080, host='127.0.0.1')
 
