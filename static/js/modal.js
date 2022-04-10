@@ -1,14 +1,16 @@
+function like(postId) {
+  const likeButton = document.getElementById(`like-button-${postId}`);
+  const likeCount = document.getElementById(`likes-count-${postId}`);
 
-document.addEventListener('DOMContentLoaded', function() {
-
-      // получим кнопку id="btn" с помощью которой будем открывать модальное окно
-    const btn = document.querySelector('#btn');
-      // активируем контент id="modal" как модальное окно
-      const modal = new bootstrap.Modal(document.querySelector('#modal'));
-      // при нажатии на кнопку
-      btn.addEventListener('click', function() {
-        // открывает модальное окно
-        modal.show();
-      });
-
-    });
+  fetch(`/like_post/${postId}`, { method: "POST" })
+    .then((res) => res.json())
+    .then((data) => {
+      likeCount.innerHTML = data["likes"];
+      if (data["liked"] === true) {
+        likeButton.className = "fa-solid fa-heart text-danger";
+      } else {
+        likeButton.className = "fa-solid fa-heart";
+      }
+    })
+    .catch((e) => alert("Could not like post."));
+}

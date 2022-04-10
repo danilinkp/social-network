@@ -13,6 +13,10 @@ class Posts(SqlAlchemyBase):
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
     image = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    likes = sqlalchemy.Column(sqlalchemy.String,
+                              nullable=True, default='')
+    collaborators = sqlalchemy.Column(sqlalchemy.String,
+                                      nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
     user_id = sqlalchemy.Column(sqlalchemy.Integer,

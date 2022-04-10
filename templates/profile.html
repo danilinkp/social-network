@@ -21,6 +21,7 @@
                             {% endif %}
                         </form>
                     </div>
+                    {% if current_user.is_authenticated and (current_user.id == id) %}
                     <form method="post" enctype="multipart/form-data">
                         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                              aria-hidden="true">
@@ -53,12 +54,71 @@
                             </div>
                         </div>
                     </form>
+                    {% endif %}
 
                     <div class="mt-3">
                         <h4>{{name}}</h4>
                         {% if current_user.is_authenticated and (current_user.id == id) %}
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="">Edit</button>
+                        <button class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#exampleModaleditprofile">Edit profile
+                        </button>
+                        <form method="post" enctype="multipart/form-data">
+                            <div class="modal fade" id="exampleModaleditprofile" tabindex="-1"
+                                 aria-labelledby="exampleModaleditprofile"
+                                 aria-hidden="true">
+                                <div class="modal-dialog ">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModaledit">Edit profile</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Закрыть"></button>
+                                        </div>
+                                        <div class="modal-body bg-dark">
+                                            <div class="container-fluid">
+                                                <div class="row">
 
+                                                    <div class="form-group">
+                                                        <textarea class="form-control" name="about_user" placeholder="About"></textarea>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row">
+
+                                                    <div class="form-group">
+
+                                                        <input class="form-control"  placeholder="GitHub account" name="git_hub"
+                                                               type="text">d
+
+                                                    </div>
+
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group">
+
+                                                        <input class="form-control" placeholder="Contact email"
+                                                               name="mail_user" id="contact_email" type="email"
+                                                               title="Contact email (format: xxx@xxx.xxx)"
+                                                               pattern="[a-zA-Z0-9!#$%&amp;'*+\/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*">
+
+
+                                                    </div>
+
+                                                </div>
+                                                <div class="row" style="width: 20%; padding-top: 5px; margin-left: 80%;">
+
+                                                    <button type="submit" class="btn btn-warning"><i
+                                            class="fa-solid fa-chevron-right"></i></button>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
 
                         {% else %}
                         <button class="btn btn-primary">Follow</button>
@@ -72,14 +132,12 @@
             <ul class="list-group list-group-flush">
 
                 <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                    <h6 class="mb-0"><img src="https://img.icons8.com/ios-filled/50/000000/github.png" width="24"
-                                          height="24"/>Github</h6>
-                    <span class="text-secondary">khairullovruslan</span>
+                    <h6 class="mb-0"><i class="fa-brands fa-github"></i>Github</h6>
+                    <span class="text-secondary">{{github}}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                    <h6 class="mb-0"><img src="https://img.icons8.com/color/48/000000/telegram-app--v3.png" width="24"
-                                          height="24"/>Telegram</h6>
-                    <span class="text-secondary">@debdebdebdebdebdeb</span>
+                    <h6 class="mb-0"><i class="fa-solid fa-envelope"></i>Mail</h6>
+                    <span class="text-secondary">{{mail}}</span>
                 </li>
             </ul>
         </div>
@@ -100,7 +158,7 @@
                     <div class="col-sm-12">
                         <ul class="list-inline mb-0">
                             <li class="list-inline-item">
-                                <h5 class="font-weight-bold mb-0 d-block">215</h5><small class="text-muted"> <i
+                                <h5 class="font-weight-bold mb-0 d-block">{{count}}</h5><small class="text-muted"> <i
                                     class="fas fa-image mr-1"></i>Posts</small>
                             </li>
                             <li class="list-inline-item">
@@ -169,8 +227,10 @@
         <div>
             <ul class="timeline">
                 {% for item in posts|reverse%}
+
                 <form method="post" enctype="multipart/form-data">
-                    <div class="modal fade" id="exampleModal{{item.id}}" tabindex="-1" aria-labelledby="exampleModalLabel{{item.id}}"
+                    <div class="modal fade" id="exampleModal{{item.id}}" tabindex="-1"
+                         aria-labelledby="exampleModalLabel{{item.id}}"
                          aria-hidden="true">
                         <div class="modal-dialog ">
                             <div class="modal-content">
@@ -183,7 +243,8 @@
                                     <div class="container-fluid">
                                         <div class="row">
                                             <div class="form-group">
-                                                <textarea class="form-control" id="about" rows="3" name="about-{{item.id}}">{{item.content}}</textarea>
+                                                <textarea class="form-control" id="about" rows="3"
+                                                          name="about-{{item.id}}">{{item.content}}</textarea>
                                             </div>
                                         </div>
                                         <br>
@@ -191,12 +252,14 @@
                                             <div class="input__wrapper col-md-8">
                                                 <div class="form-group">
 
-                                                    <input type="file" class="form-control-file" id="photo1" name="file-{{item.id}}">
+                                                    <input type="file" class="form-control-file" id="photo1"
+                                                           name="file-{{item.id}}">
                                                     <label for="photo1" class="input__file-button bg-light">
-                                                        <span class="input__file-icon-wrapper"><img class="input__file-icon"
-                                                                                                    src="../static/download.png"
-                                                                                                    alt="Выбрать файл"
-                                                                                                    width="25"></span>
+                                                        <span class="input__file-icon-wrapper"><img
+                                                                class="input__file-icon"
+                                                                src="../static/download.png"
+                                                                alt="Выбрать файл"
+                                                                width="25"></span>
                                                         <span class="input__file-button-text">Select a file</span>
                                                     </label>
                                                 </div>
@@ -210,8 +273,9 @@
                         </div>
                     </div>
                 </form>
-                 <form method="post" enctype="multipart/form-data">
-                    <div class="modal fade" id="exampleModal-{{item.id}}" tabindex="-1" aria-labelledby="exampleModal-Label{{item.id}}"
+                <form method="post" enctype="multipart/form-data">
+                    <div class="modal fade" id="exampleModal-{{item.id}}" tabindex="-1"
+                         aria-labelledby="exampleModal-Label{{item.id}}"
                          aria-hidden="true">
                         <div class="modal-dialog ">
                             <div class="modal-content">
@@ -223,18 +287,21 @@
                                 <div class="modal-body bg-dark">
                                     <div class="container-fluid">
                                         <div class="row">
-                                           <span style="color: white;">Are you sure you want to delete the post?</span>
+                                            <span style="color: white;">Are you sure you want to delete the post?</span>
                                             <br>
-                                           <span style="color: white;">If you delete a post, you won't be able to get it back.</span>
+                                            <span style="color: white;">If you delete a post, you won't be able to get it back.</span>
                                         </div>
                                         <br>
                                         <div class="mb-3 form-check">
-                                            <input type="checkbox" name='delete_agree-{{item.id}}' class="form-check-input" id="exampleCheck1" required>
-                                            <label class="form-check-label" style="color: green;" for="exampleCheck1">I agree</label>
+                                            <input type="checkbox" name='delete_agree-{{item.id}}'
+                                                   class="form-check-input" id="exampleCheck1" required>
+                                            <label class="form-check-label" style="color: green;" for="exampleCheck1">I
+                                                agree</label>
                                         </div>
                                         <div class="row">
 
-                                            <button type="submit" class="btn btn-danger btn-circle"><i class="fa-solid fa-trash"></i></button>
+                                            <button type="submit" class="btn btn-danger btn-circle"><i
+                                                    class="fa-solid fa-trash"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -245,8 +312,8 @@
                 <li>
 
                     <div class="timeline-time">
-                        <span class="time">{{item.created_date.strftime('%d %B %Y')}}</span>
-                        <span class="time">{{item.created_date.strftime('%H:%M')}}</span>
+                        <span class="time" style="color: white;">{{item.created_date.strftime('%d %B %Y')}}</span>
+                        <span class="time" style="color: white;">{{item.created_date.strftime('%H:%M')}}</span>
 
                     </div>
                     <div class="timeline-icon">
@@ -258,21 +325,24 @@
 
 
                             <span class="username">{{name}}</span>
-                            <span class="pull-right text-muted">18 Views</span>
-                            <span class="dropdown-edit">
+                            {% if current_user.is_authenticated and (current_user.id == id) %}
+                                <span class="dropdown-edit">
 
-                                  <a class="dropdown-toggle" href="#" id="dropdownMenuButton1" role="button"
-                                     data-bs-toggle="dropdown" aria-expanded="false"><i
-                                          class="fa-solid fa-ellipsis-vertical"></i></a>
-                                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal{{item.id}}" type="button">Редактировать</a></li>
-                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal-{{item.id}}" type="button">Удалить</a></li>
+                                      <a class="dropdown-toggle" href="#" id="dropdownMenuButton1" role="button"
+                                         data-bs-toggle="dropdown" aria-expanded="false"><i
+                                              class="fa-solid fa-ellipsis-vertical"></i></a>
+                                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item" data-bs-toggle="modal"
+                                               data-bs-target="#exampleModal{{item.id}}"
+                                               type="button">Edit</a></li>
+                                        <li><a class="dropdown-item" data-bs-toggle="modal"
+                                               data-bs-target="#exampleModal-{{item.id}}" type="button">Delete</a></li>
 
-                                  </ul>
+                                      </ul>
 
 
-                            </span>
-
+                                </span>
+                            {% endif %}
 
 
                         </div>
@@ -285,23 +355,33 @@
                                 {{item.content}}
                             </p>
                         </div>
-                        <div class="timeline-likes">
-                            <div class="stats">
-                                    <span class="fa-stack fa-fw stats-icon">
-                                    <i class="fa fa-circle fa-stack-2x text-danger"></i>
-                                    <i class="fa fa-heart fa-stack-1x fa-inverse t-plus-1"></i>
-                                    </span>
-                                <span class="fa-stack fa-fw stats-icon">
-                                    <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                                    <i class="fa fa-thumbs-up fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                <span class="stats-total">4.3k</span>
-                            </div>
-                        </div>
 
                         <div class="timeline-footer">
-                            <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i
-                                    class="fa fa-thumbs-up fa-fw fa-lg m-r-3"></i> Like</a>
+                            <form method="post" enctype="multipart/form-data">
+                                {% set list1 = item.likes.split(', ') %}
+                                {% set user_id_ = current_user.id | string() %}
+                                {% if user_id_ in list1 %}
+
+                                    <i
+                                      class="fa-solid fa-heart text-danger"
+                                      id="like-button-{{item.id}}"
+                                      onclick="like({{item.id}})"
+                                    ></i>
+                                {% else %}
+                                    <i
+                                      class="fa-solid fa-heart"
+                                      id="like-button-{{item.id}}"
+                                      onclick="like({{item.id}})"
+                                    ></i>
+
+                                {% endif %}
+                                <span class="stats-total" id="likes-count-{{item.id}}">{{ item.likes|length }}</span>
+
+
+
+
+
+                            </form>
                         </div>
                     </div>
 
@@ -317,7 +397,7 @@
 
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-                        crossorigin="anonymous"></script>
+                crossorigin="anonymous"></script>
     </div>
 </div>
 {% endblock %}
