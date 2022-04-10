@@ -1,6 +1,7 @@
 import requests
 from flask import Flask, render_template, request, session, url_for, send_from_directory, jsonify
 from werkzeug.utils import redirect
+from flask_mail import Mail, Message
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.posts import Posts
@@ -9,6 +10,7 @@ from forms.loginform import LoginForm
 from forms.user import RegisterForm
 from flask_avatars import Avatars
 import os
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__name__))
@@ -278,7 +280,7 @@ def like(post_id):
 
 
 def main():
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=8081, host='127.0.0.1')
 
 
 if __name__ == '__main__':
