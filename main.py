@@ -1,11 +1,11 @@
-import requests
-from flask import Flask, render_template, request, session, url_for, send_from_directory, jsonify
+from flask import Flask, render_template, request
 from werkzeug.utils import redirect
-# from flask_mail import Mail, Message
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
+from data.friends import Friend
 from data.posts import Posts
 from data.users import User
+from forms.friends_search_form import FriendsSearchForm
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
 from flask_avatars import Avatars
@@ -219,14 +219,13 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect("")
+    return redirect("/")
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
-        print(2121)
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
                                    form=form,
@@ -277,6 +276,22 @@ def like(post_id):
         post.likes = str(current_user.id)
         db_sess.commit()
         return jsonify({"likes": 1, "liked": True})
+
+
+@app.route('/friends', methods=['GET', 'POST'])
+def friends():
+    db_sess = db_session.create_session()
+    form = FriendsSearchForm()
+    if request.method == 'POST':
+        data = request.form
+        input_name = data['friends_search']
+        users = db_sess.query(User).filter(User.name == input_name).all()
+        friends = db_sess.query(Friend).filter(Friend.name == input_name).all()
+
+    else:
+        users = db_sess.query(User).all()
+        friends = db_sess.query(Friend).all()
+    return render_template('friends.html', title='Friends', users=users, friends=friends, form=form)
 
 
 def main():
