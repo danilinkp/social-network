@@ -14,3 +14,20 @@ function like(postId) {
     })
     .catch((e) => alert("Could not like post."));
 }
+
+function follow(userId) {
+  const followButton = document.getElementById(`follow-button-${userId}`);
+  const followCount = document.getElementById(`followers-count-${userId}`);
+
+  fetch(`/follow_user/${userId}`, { method: "POST" })
+    .then((res) => res.json())
+    .then((data) => {
+      followCount.innerHTML = data["followers"];
+      if (data["followed"] === true) {
+        followButton.innerText = "Unfollow";
+      } else {
+        followButton.innerText = "Follow";
+      }
+    })
+    .catch((e) => alert("Could not follow user."));
+}

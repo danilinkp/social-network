@@ -5,7 +5,6 @@ from data import db_session
 from data.friends import Friend
 from data.posts import Posts
 from data.users import User
-from forms.friends_search_form import FriendsSearchForm
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
 from flask_avatars import Avatars
@@ -20,7 +19,6 @@ app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
 login_manager = LoginManager()
 login_manager.init_app(app)
 avatars = Avatars(app)
-
 
 
 @app.route('/avatars/<path:filename>')
@@ -281,17 +279,49 @@ def like(post_id):
 @app.route('/friends', methods=['GET', 'POST'])
 def friends():
     db_sess = db_session.create_session()
-    form = FriendsSearchForm()
     if request.method == 'POST':
         data = request.form
         input_name = data['friends_search']
         users = db_sess.query(User).filter(User.name == input_name).all()
         friends = db_sess.query(Friend).filter(Friend.name == input_name).all()
-
     else:
         users = db_sess.query(User).all()
         friends = db_sess.query(Friend).all()
-    return render_template('friends.html', title='Friends', users=users, friends=friends, form=form)
+    print(users, friends)
+    return render_template('friends.html', title='Friends', users=users)
+
+
+@app.route('/follow_user/<user_id>', methods=['GET', 'POST'])
+def follow_user(user_id):
+    db_sess = db_session.create_session()
+    if current_user.is_authenticated:
+        my_user = db_sess.query(User).filter(User.id == current_user.id).first()
+        user = db_sess.query(User).filter(User.id == user_id).first()
+        followings = my_user.followings
+        followers = user.followers
+        if followings:
+            followings = followings.split(', ')
+            followers = followers.split(', ')
+            followed = False
+            if str(current_user.id) in followings and str(user_id) in followers:
+                index_followings = followings.index(str(current_user.id))
+                index_followers = followers.index(str(user_id))
+                del followings[index_followings]
+                del followers[index_followers]
+            else:
+                followings.append(str(current_user.id))
+                followers.append(str(user_id))
+                followed = True
+            followings = ', '.join(followings)
+            followers = ', '.join(followers)
+            my_user.following = followings
+            user.followers = followers
+            db_sess.commit()
+            return jsonify({"followings": followings, "followed": followed})
+        else:
+            my_user.followings = str(current_user.id)
+            db_sess.commit()
+            return jsonify({"followings": 1, "followed": True})
 
 
 def main():
