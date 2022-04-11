@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+{% if not users and not friends%}
+<h1>WE CAN"T FIND NOTHING</h1>
+{% else %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="input__block" style="margin-left: auto; margin-right: auto; max-width: 700px;">
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="friends_search" placeholder="Write your friend's name" aria-label="Write your friend's name" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {% if not friends %}
+        <div class="friends__block" style="align:center;">
+            {% for user in users %}
+            <div class="card-friends p-3" style="background-color: #2d333b; border: 1px solid white; border-radius: 10px;">
+                <div class="object__block">
+                    <div class="image"> <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80" class="rounded" width="155"> </div>
+                    <div class="ml-3 w-100">
+                        <h4 class="mb-0 mt-0" style="color: white;">{{user.name}}</h4> <span style="color: white;">{{user.about}}</span>
+                        <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">
+                            <div class="d-flex flex-column"> <span class="articles">Posts</span> <span class="number1">38</span> </div>
+                            <div class="d-flex flex-column"> <span class="followers">Followers</span> <span class="number2">980</span> </div>
+                            <div class="d-flex flex-column"> <span class="rating">Following</span> <span class="number3">100</span> </div>
+                        </div>
+                        <div class="buttons__block"> <button class="btn btn-sm btn-outline-primary w-100">Chat</button> <button class="btn btn-sm btn-primary w-100 ml-2">Follow</button> </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div class="friends__block">
+            {% for friend in friends %}
+            <div class="card p-3" style="background-color: #2d333b; border: 1px solid white; border-radius: 10px;">
+                <div class="object__block">
+                    <div class="image"> <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80" class="rounded" width="155"> </div>
+                    <div class="ml-3 w-100">
+                        <h4 class="mb-0 mt-0" style="color: white;">{{ friend.name }}</h4> <span style="color: white;">{{ friend.about }}</span>
+                        <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">
+                            <div class="d-flex flex-column"> <span class="articles">{{ friend.posts }}</span> <span class="number1">38</span> </div>
+                            <div class="d-flex flex-column"> <span class="followers">{{ friend.followers }}</span> <span class="number2">980</span> </div>
+                            <div class="d-flex flex-column"> <span class="rating">{{ friend.folowing }}</span> <span class="number3">8.9</span> </div>
+                        </div>
+                        <div class="buttons__block"> <button class="btn btn-sm btn-outline-primary w-100">Chat</button> <button class="btn btn-sm btn-primary w-100 ml-2">Follow</button> </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endif %}
+{% endblock %}
