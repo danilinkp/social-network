@@ -17,6 +17,7 @@ class User(SqlAlchemyBase, UserMixin):
     image = sqlalchemy.Column(sqlalchemy.String, default="default.jpg")
     email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=True)
     followings = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='')
+
     followers = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='')
 
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)

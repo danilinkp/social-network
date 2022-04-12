@@ -24,10 +24,10 @@ function follow(userId) {
     .then((data) => {
       followCount.innerHTML = data["followers"];
       if (data["followed"] === true) {
-        followButton.innerText = "Unfollow";
+        followButton.innerHTML    = "Unfollow";
       } else {
-        followButton.innerText = "Follow";
+        followButton.innerHTML    = "Follow";
       }
     })
-    .catch((e) => alert("Could not follow user."));
+    .catch((e) => alert(e));
 }

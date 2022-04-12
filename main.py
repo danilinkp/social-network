@@ -283,45 +283,56 @@ def friends():
         data = request.form
         input_name = data['friends_search']
         users = db_sess.query(User).filter(User.name == input_name).all()
-        friends = db_sess.query(Friend).filter(Friend.name == input_name).all()
     else:
         users = db_sess.query(User).all()
-        friends = db_sess.query(Friend).all()
-    print(users, friends)
+
     return render_template('friends.html', title='Friends', users=users)
 
 
 @app.route('/follow_user/<user_id>', methods=['GET', 'POST'])
 def follow_user(user_id):
     db_sess = db_session.create_session()
-    if current_user.is_authenticated:
-        my_user = db_sess.query(User).filter(User.id == current_user.id).first()
-        user = db_sess.query(User).filter(User.id == user_id).first()
-        followings = my_user.followings
-        followers = user.followers
-        if followings:
-            followings = followings.split(', ')
-            followers = followers.split(', ')
-            followed = False
-            if str(current_user.id) in followings and str(user_id) in followers:
-                index_followings = followings.index(str(current_user.id))
-                index_followers = followers.index(str(user_id))
-                del followings[index_followings]
-                del followers[index_followers]
-            else:
-                followings.append(str(current_user.id))
-                followers.append(str(user_id))
-                followed = True
-            followings = ', '.join(followings)
-            followers = ', '.join(followers)
-            my_user.following = followings
-            user.followers = followers
-            db_sess.commit()
-            return jsonify({"followings": followings, "followed": followed})
+    my_user = db_sess.query(User).filter(User.id == current_user.id).first()
+    user = db_sess.query(User).filter(User.id == user_id).first()
+    followings = my_user.followings
+    followers = user.followers
+    if followings and followers:
+        followings = followings.split(', ')
+        followers = followers.split(', ')
+        followed = False
+
+        if str(current_user.id) in followers and str(user_id) in followings:
+            index_followings = followings.index(str(user_id))
+            index_followers = followers.index(str(current_user.id))
+            del followings[index_followings]
+            del followers[index_followers]
+
+        elif str(current_user.id) in followers and not str(user_id) in followings:
+            index_followers = followers.index(str(current_user.id))
+            del followers[index_followers]
+
+        elif not str(current_user.id) in followers and str(user_id) in followings:
+
+            index_followings = followings.index(str(user_id))
+            del followings[index_followings]
+
         else:
-            my_user.followings = str(current_user.id)
-            db_sess.commit()
-            return jsonify({"followings": 1, "followed": True})
+            followings.append(str(user_id))
+            followers.append(str(current_user.id))
+            followed = True
+        followers_count = len(followers)
+        followings = ', '.join(followings)
+        followers = ', '.join(followers)
+        my_user.followings = followings
+        user.followers = followers
+
+        db_sess.commit()
+        return jsonify({'followers': followers_count, "followed": followed})
+    else:
+        my_user.followings = str(user_id)
+        user.followers = str(current_user.id)
+        db_sess.commit()
+        return jsonify({'followers': 1, "followed": True})
 
 
 def main():
