@@ -1,15 +1,13 @@
-from flask import Flask, render_template, request, session, url_for, jsonify
-from werkzeug.utils import redirect, send_from_directory
+from flask import Flask, render_template, request, session, url_for, jsonify, send_from_directory
+from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
-from data.friends import Friend
 from data.posts import Posts
 from data.users import User
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
 from flask_avatars import Avatars
 import os
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__name__))
@@ -23,6 +21,8 @@ avatars = Avatars(app)
 
 @app.route('/avatars/<path:filename>')
 def get_avatar(filename):
+    print(filename)
+    app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
     return send_from_directory(app.config['AVATARS_SAVE_PATH'], filename)
 
 
@@ -188,6 +188,7 @@ def crop():
             db_sess.commit()
 
         return redirect(f'/profile/{current_user.name}')
+    print(123)
 
     return render_template('crop.html')
 
