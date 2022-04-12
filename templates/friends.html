@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-{% if not users and not friends%}
-<h1 style="color: white">WE CAN"T FIND NOTHING</h1>
-{% else %}
+
     <form method="post" enctype="multipart/form-data">
         <div class="input__block" style="margin-left: auto; margin-right: auto; max-width: 700px;">
             <div class="form-group">
@@ -14,50 +12,66 @@
         </div>
     </form>
 
-<!--    {% if not friends %}-->
-        <div class="friends__block">
-            {% for user in users %}
-            {% set list1 = user.followers.split(', ') %}
-            {% set user_id_ = current_user.id | string() %}
-            <div class="card p-3" style="background-color: #2d333b; border: 1px solid white; border-radius: 10px;">
-                <div class="object__block">
-                    <div class="image"> <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80" class="rounded" width="155"> </div>
-                    <div class="ml-3 w-100">
-                        <h4 class="mb-0 mt-0" name="nickname" style="color: white;">{{user.name}}</h4> <span style="color: white;">{{user.about}}</span>
-                        <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">
-                            <div class="d-flex flex-column"> <span class="articles">Posts</span> <span class="number1">{{ user.posts }}</span> </div>
-                            <div class="d-flex flex-column"> <span class="followers">Followers</span> <span id="followers-count-{{user.id}}" class="number2">{{ user.followers|length }}</span> </div>
-                            <div class="d-flex flex-column"> <span class="rating">Following</span> <span class="number3">{{ user.followings|length }}</span> </div>
-                        </div>
-                        <div class="buttons__block">
-                            <button class="btn btn-sm btn-outline-primary w-100">Chat</button>
+    {% if current_user.followings.split(', ') == [''] and not users %}
+    <div class="friends__error">
+        <h1 style="color: white;">Nothing found</h1>
+        <a href="/friends">Click here to see all your friends</a>
+    </div>
+    {% else %}
 
-                            <button class="btn btn-sm btn-primary w-100 ml-2" id="follow-button-{{user.id}}" onclick="follow({{user.id}})">{% if user_id_ in list1 %} Unfollow {% else %} Follow {% endif %}</button> </div>
+        {% if current_user.followings.split(', ') == [''] %}
+            <div class="friends__block">
+                {% for user in users %}
+                {% set list1 = user.followers.split(', ') %}
+                {% set user_id_ = current_user.id | string() %}
+                <div class="card_friend p-3" style="background-color: #2d333b; border: 1px solid white; border-radius: 10px;">
+                    <div class="object__block">
+                        <div class="image"><a href=""><img src="../static/avatars/{{ user.image }}" class="rounded" width="250"></a> </div>
+                        <div class="ml-3 w-100">
+                            <h4 class="mb-0 mt-0" name="nickname" style="color: white;"> <a href="/profile/{{user.name}}" style="text-decoration: none;">{{user.name}}</a> </h4> <span style="color: white;">{{user.about}}</span>
+                            <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">
+                                <div class="d-flex flex-column"> <span class="articles">Posts</span> <span class="number1">{{ user.posts }}</span> </div>
+                                <div class="d-flex flex-column"> <span class="followers">Followers</span> <span id="followers-count-{{user.id}}" class="number2">{{ user.followers|length }}</span> </div>
+                                <div class="d-flex flex-column"> <span class="rating">Following</span> <span class="number3">{{ user.followings|length }}</span> </div>
+                            </div>
+                            <div class="buttons__block">
+                                <button class="btn btn-sm btn-outline-primary w-100">Chat</button>
+
+                                <button class="btn btn-sm btn-primary w-100 ml-2" id="follow-button-{{user.id}}" onclick="follow({{user.id}})">{% if user_id_ in list1 %} Unfollow {% else %} Follow {% endif %}</button> </div>
+                            </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
 
 
-<!--    {% else %}-->
-<!--        <div class="friends__block">-->
-<!--            {% for friend in friends %}-->
-<!--            <div class="card p-3" style="background-color: #2d333b; border: 1px solid white; border-radius: 10px;">-->
-<!--                <div class="object__block">-->
-<!--                    <div class="image"> <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80" class="rounded" width="155"> </div>-->
-<!--                    <div class="ml-3 w-100">-->
-<!--                        <h4 class="mb-0 mt-0" style="color: white;">{{ friend.name }}</h4> <span style="color: white;">{{ friend.about }}</span>-->
-<!--                        <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">-->
-<!--                            <div class="d-flex flex-column"> <span class="articles">1</span> <span class="number1">38</span> </div>-->
-<!--                            <div class="d-flex flex-column"> <span class="followers">1</span> <span class="number2">980</span> </div>-->
-<!--                            <div class="d-flex flex-column"> <span class="rating">0</span> <span class="number3">8.9</span> </div>-->
-<!--                        <div class="buttons__block"> <button class="btn btn-sm btn-outline-primary w-100">Chat</button> <button class="btn btn-sm btn-primary w-100 ml-2">Unfollow</button> </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            {% endfor %}-->
-<!--        </div>-->
-<!--    {% endif %}-->
+        {% else %}
+            <div class="friends__block">
+                {% for user in users%}
+                {% set ids = current_user.followings.split(', ') %}
+                {% set list1 = user.followers.split(', ') %}
+                {% set user_id_ = current_user.id | string() %}
+                    {% if user.id | string() in ids%}
+                    <div class="card_friend p-3" style="background-color: #2d333b; border: 1px solid white; border-radius: 10px;">
+                        <div class="object__block">
+                            <div class="image"> <a href=""><img src="../static/avatars/{{ user.image }}" class="rounded" width="250"></a> </div>
+                            <div class="ml-3 w-100">
+                                <h4 class="mb-0 mt-0" style="color: white;"><a href="/profile/{{user.name}}" style="text-decoration: none;">{{user.name}}</a></h4> <span style="color: white;">{{ user.about }}</span>
+                                <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">
+                                    <div class="d-flex flex-column"> <span class="articles">Posts</span> <span class="number1">{{ user.posts }}</span> </div>
+                                    <div class="d-flex flex-column"> <span class="followers">Followers</span> <span id="followers-count-{{user.id}}" class="number2">{{ user.followers|length }}</span> </div>
+                                    <div class="d-flex flex-column"> <span class="rating">Following</span> <span class="number3">{{ user.followings|length }}</span> </div>
+                                </div>
+                                    <div class="buttons__block">
+                                        <button class="btn btn-sm btn-outline-primary w-100">Chat</button>
+                                        <button class="btn btn-sm btn-primary w-100 ml-2" id="follow-button-{{user.id}}" onclick="follow({{user.id}})">{% if user_id_ in list1 %} Unfollow {% else %} Follow {% endif %}</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+                    {% endif %}
+                {% endfor %}
+        {% endif %}
 {% endif %}
 {% endblock %}

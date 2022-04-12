@@ -283,9 +283,9 @@ def friends():
     if request.method == 'POST':
         data = request.form
         input_name = data['friends_search']
-        users = db_sess.query(User).filter(User.name == input_name).all()
+        users = db_sess.query(User).filter(User.name.like(input_name)).filter(User.id != current_user.id).all()
     else:
-        users = db_sess.query(User).all()
+        users = db_sess.query(User).filter(User.id != current_user.id).all()
 
     return render_template('friends.html', title='Friends', users=users)
 

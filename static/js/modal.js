@@ -29,5 +29,5 @@ function follow(userId) {
         followButton.innerHTML    = "Follow";
       }
     })
-    .catch((e) => alert(e));
+    .catch((e) => console.log(e));
 }

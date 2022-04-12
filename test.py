@@ -1,2 +1,4 @@
-a = ['a', '1', '3']
-print(a.index('as'))
+if ['']:
+    print(1)
+else:
+    print(0)
