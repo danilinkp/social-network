@@ -3,15 +3,15 @@
 
 
 <div class="container">
-<div class="row clearfix">
+<div class="row">
     <div class="col-lg-12">
         <div class="card chat-app">
             <div id="plist" class="people-list">
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-search"></i></span>
+                        <span style="height: 40px;" class="input-group-text"><i class="fa fa-search"></i></span>
                     </div>
-                    <input type="text" class="form-control" placeholder="Search...">
+                    <input  type="text" class="form-control" placeholder="Search...">
                 </div>
                 <ul class="list-unstyled chat-list mt-2 mb-0">
                     <li class="clearfix">
@@ -95,12 +95,12 @@
                         </li>
                     </ul>
                 </div>
-                <div class="chat-message clearfix">
-                    <div class="input-group mb-0">
+                <div class="chat-message clearfix" id="for_message_input">
+                    <div class="input-group mb-0" id="message_input" style=" width: 90%;">
                         <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-send"></i></span>
+                            <span class="input-group-text" style="height: 40px;"><i class="fa fa-send"></i></span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Enter text here...">
+                        <input type="text"  class="form-control" placeholder="Enter text here...">
                     </div>
                 </div>
             </div>
