@@ -701,12 +701,9 @@ body {
     height: 0
 }
 
-#for_message_input {
-  position: relative; /* Чтобы абсолютный элемент внутри позиционировался относительно этого */
-  height: 200px;;
-}
-
 #message_input {
   position: absolute;
   bottom: 0; /* Прилипнет к нижней рамке родителя (если у последнего будет position) */
+  right: 0;
+  width: 100%;
 }
