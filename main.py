@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, session, url_for, jsonify
 from werkzeug.utils import redirect, send_from_directory
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
+from data.chat import Chats
 from data.friends import Friend
+from data.messages import Message
 from data.posts import Posts
 from data.users import User
 from forms.friends_search_form import FriendsSearchForm
@@ -20,7 +22,6 @@ app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
 login_manager = LoginManager()
 login_manager.init_app(app)
 avatars = Avatars(app)
-
 
 
 @app.route('/avatars/<path:filename>')
@@ -215,9 +216,31 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/message', methods=['GET', 'POST'])
-def message():
-    return render_template('message.html')
+@app.route('/message/<user_id>', methods=['GET', 'POST'])
+def message(user_id):
+    db_sess = db_session.create_session()
+    chat = db_sess.query(Chats).filter(
+        Chats.users == f'{user_id}, {current_user.id}' or Chats.users == f'{current_user.id}, {user_id}').first()
+    if chat:
+        id = chat.id
+    else:
+        chat = Chats(
+            users=f'{current_user.id}, {user_id}'
+        )
+        db_sess.add(chat)
+        db_sess.commit()
+        db_sess = db_session.create_session()
+        chat = db_sess.query(Chats).filter(
+            Chats.users == f'{user_id}, {current_user.id}' or Chats.users == f'{current_user.id}, {user_id}').first()
+        id = chat.id
+
+
+    if request.method == 'POST':
+        pass
+    messages = db_sess.query(Message).filter(Message.chat_id == id).all()
+    print(id)
+    print(messages)
+    return render_template('message.html', messages=messages)
 
 
 @app.route('/logout')
