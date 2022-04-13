@@ -218,28 +218,41 @@ def login():
 
 @app.route('/message/<user_id>', methods=['GET', 'POST'])
 def message(user_id):
-    db_sess = db_session.create_session()
-    chat = db_sess.query(Chats).filter(
-        Chats.users == f'{user_id}, {current_user.id}' or Chats.users == f'{current_user.id}, {user_id}').first()
-    if chat:
-        id = chat.id
-    else:
-        chat = Chats(
-            users=f'{current_user.id}, {user_id}'
-        )
-        db_sess.add(chat)
-        db_sess.commit()
-        db_sess = db_session.create_session()
-        chat = db_sess.query(Chats).filter(
-            Chats.users == f'{user_id}, {current_user.id}' or Chats.users == f'{current_user.id}, {user_id}').first()
-        id = chat.id
-
-
     if request.method == 'POST':
-        pass
-    messages = db_sess.query(Message).filter(Message.chat_id == id).all()
-    print(id)
-    print(messages)
+        message = request.form['message_user_input']
+        if message:
+            db_sess = db_session.create_session()
+            chat = db_sess.query(Chats).filter((
+                                                       Chats.users == f'{user_id}, {current_user.id}') | (
+                                                           Chats.users == f'{current_user.id}, {user_id}')).first()
+            id = chat.id
+            message_user = Message(
+                content=message, chat_id=id, user_id=current_user.id
+            )
+            db_sess.add(message_user)
+            db_sess.commit()
+        return redirect(f"/message/{user_id}")
+
+
+
+    else:
+        db_sess = db_session.create_session()
+        chat = db_sess.query(Chats).filter((
+            Chats.users == f'{user_id}, {current_user.id}') | (Chats.users == f'{current_user.id}, {user_id}')).first()
+        if chat:
+            id = chat.id
+        else:
+            chat = Chats(
+                users=f'{current_user.id}, {user_id}'
+            )
+            db_sess.add(chat)
+            db_sess.commit()
+            db_sess = db_session.create_session()
+            chat = db_sess.query(Chats).filter((
+                Chats.users == f'{user_id}, {current_user.id}') | (Chats.users == f'{current_user.id}, {user_id}')).first()
+            id = chat.id
+
+        messages = db_sess.query(Message).filter(Message.chat_id == id).all()
     return render_template('message.html', messages=messages)
 
 

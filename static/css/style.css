@@ -1,5 +1,5 @@
 html body {
-    background-color: #2227:
+    background-color: #2227;
 }
 
 .friends__block{
@@ -530,16 +530,7 @@ body {
     font-size: 16px;
 }
 
-.card {
-    background: #fff;
-    transition: .5s;
-    border: 0;
-    margin-bottom: 30px;
-    border-radius: .55rem;
-    position: relative;
-    width: 100%;
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
-}
+
 .chat-app .people-list {
     width: 280px;
     position: absolute;
@@ -551,21 +542,14 @@ body {
 
 .chat-app .chat {
     margin-left: 280px;
-    border-left: 1px solid #eaeaea
+    border-left: 1px solid #eaeaea;
+    height: 120%;
+    overflow: auto;
 }
 
-.people-list {
-    -moz-transition: .5s;
-    -o-transition: .5s;
-    -webkit-transition: .5s;
-    transition: .5s
-}
 
-.people-list .chat-list li {
-    padding: 10px 15px;
-    list-style: none;
-    border-radius: 3px
-}
+
+
 
 .people-list .chat-list li:hover {
     background: #efefef;
@@ -590,15 +574,9 @@ body {
     border-radius: 50%
 }
 
-.people-list .about {
-    float: left;
-    padding-left: 8px
-}
 
-.people-list .status {
-    color: #999;
-    font-size: 13px
-}
+
+
 
 .chat .chat-header {
     padding: 15px 20px;
@@ -704,25 +682,11 @@ body {
     padding: 20px
 }
 
-.online,
-.offline,
-.me {
-    margin-right: 2px;
-    font-size: 8px;
-    vertical-align: middle
+.chat .chat-history .message-data-time {
+    color: #434651;
+    padding-left: 6px
 }
 
-.online {
-    color: #86c541
-}
-
-.offline {
-    color: #e47297
-}
-
-.me {
-    color: #1d8ecd
-}
 
 .float-right {
     float: right
