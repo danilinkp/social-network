@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, session, url_for, jsonify
-from werkzeug.utils import redirect, send_from_directory
+from flask import Flask, render_template, request, session, url_for, jsonify, send_from_directory
+from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.chat import Chats
@@ -253,7 +253,8 @@ def message(user_id):
             id = chat.id
 
         messages = db_sess.query(Message).filter(Message.chat_id == id).all()
-    return render_template('message.html', messages=messages)
+    friends = db_sess.query(User).filter(current_user.id != User.id).all()
+    return render_template('message.html', messages=messages, friends=friends)
 
 
 @app.route('/logout')
@@ -333,6 +334,13 @@ def friends():
         users = db_sess.query(User).all()
         friends = db_sess.query(Friend).all()
     return render_template('friends.html', title='Friends', users=users, friends=friends, form=form)
+
+@app.route('/message/', methods=['GET', 'POST'])
+def message_1():
+
+    db_sess = db_session.create_session()
+    friends = db_sess.query(User).filter(current_user.id != User.id).all()
+    return render_template('message.html', friends=friends)
 
 
 def main():

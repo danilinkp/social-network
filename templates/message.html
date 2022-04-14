@@ -5,7 +5,7 @@
 <div class="container">
 <div class="row">
 
-        <div class="card chat-app" style="height: 85vh; background-color: ">
+        <div class="card chat-app" style="height: 85vh; background-color: #2227; border-radius: 5%;">
                 <div id="plist" class="people-list">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -14,16 +14,19 @@
                         <input  type="text" class="form-control" placeholder="Search...">
                     </div>
                     <ul class="list-unstyled chat-list mt-2 mb-0">
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Vincent Porter</div>
+                        {% for friend in friends %}
+                            <li class="clearfix">
+                                <img src="../static/avatars/{{friend.image}}" alt="avatar">
 
-                            </div>
-                        </li>
+                                <div class="about">
+                                    <div class="name" style="color: white;" >{{friend.name}}</div>
+
+                                </div>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </div>
-                <div class="chat" >
+                <div class="chat" style="max-height: 100%; ">
                     <div class="chat-header clearfix">
                         <div class="row">
                             <div class="col-lg-6">
@@ -31,29 +34,29 @@
                                     <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
                                 </a>
                                 <div class="chat-about">
-                                    <h6 class="m-b-0">Aiden Chavez</h6>
+                                    <h6 class="m-b-0" style="color: white;">Aiden Chavez</h6>
 
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="chat-history">
+                    <div class="chat-history"   id="chat_for_js"  style="overflow: auto; max-height: 85%; background-color: #2d333b;">
                         <ul class="m-b-0">
                              {% for item in messages%}
                                 {% if item.user_id == current_user.id %}
                                     <li class="clearfix">
                                         <div class="message-data text-right">
-                                            <span class="message-data-time">10:10 AM, Today</span>
+                                            <span class="message-data-time" style="color: white;">{{item.created_date.strftime('%H:%M')}} {{item.created_date.strftime('%d %B %Y')}}</span>
 
                                         </div>
-                                        <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
+                                        <div class="message other-message float-right">{{item.content}}</div>
                                     </li>
                                 {% else %}
                                     <li class="clearfix">
                                         <div class="message-data">
-                                            <span class="message-data-time">10:12 AM, Today</span>
+                                            <span class="message-data-time">{{item.created_date.strftime('%H:%M')}} {{item.created_date.strftime('%d %B %Y')}}</span>
                                         </div>
-                                        <div class="message my-message">Are we meeting today?</div>
+                                        <div class="message my-message">{{item.content}}</div>
                                     </li>
                                 {% endif %}
                              {% endfor %}
@@ -61,17 +64,21 @@
                     </div>
                     <form method="post" enctype="multipart/form-data">
                         <div class="chat-message clearfix" id="for_message_input">
-                            <div class="input-group mb-0" id="message_input" style=" width: 90%;">
+                            <div class="input-group mb-0" id="message_input" style=" width: 77%;">
+
+                                <input type="text" name='message_user_input' class="form-control" placeholder="Enter text here...">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" style="height: 40px;"><i class="fa fa-send"></i></span>
                                 </div>
-                                <input type="text"  name='message_user_input' class="form-control" placeholder="Enter text here...">
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    <script>
+        chat_for_js.scrollTop = chat_for_js.scrollHeight;
+      </script>
 </div>
 
 {% endblock %}
