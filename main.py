@@ -1,16 +1,21 @@
-import random
-
-from flask import Flask, render_template, request, session, url_for, jsonify, send_from_directory
+import requests
+from flask import Flask, render_template, request, session, url_for, send_from_directory, jsonify
 from werkzeug.utils import redirect
+from flask_mail import Mail, Message
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
+from data.chat import Chats
+from data.friends import Friend
+from data.messages import Message
 from data.posts import Posts
 from data.send_email import send_email
 from data.users import User
+from forms.friends_search_form import FriendsSearchForm
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
 from flask_avatars import Avatars
 import os
+
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__name__))
@@ -20,6 +25,7 @@ app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
 login_manager = LoginManager()
 login_manager.init_app(app)
 avatars = Avatars(app)
+
 
 
 @app.route('/avatars/<path:filename>')
@@ -192,7 +198,6 @@ def crop():
 
         return redirect(f'/profile/{current_user.name}')
 
-
     return render_template('crop.html')
 
 
@@ -215,6 +220,47 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/message/<user_id>', methods=['GET', 'POST'])
+def message(user_id):
+    if request.method == 'POST':
+        message = request.form['message_user_input']
+        if message:
+            db_sess = db_session.create_session()
+            chat = db_sess.query(Chats).filter((
+                                                       Chats.users == f'{user_id}, {current_user.id}') | (
+                                                           Chats.users == f'{current_user.id}, {user_id}')).first()
+            id = chat.id
+            message_user = Message(
+                content=message, chat_id=id, user_id=current_user.id
+            )
+            db_sess.add(message_user)
+            db_sess.commit()
+        return redirect(f"/message/{user_id}")
+
+
+
+    else:
+        db_sess = db_session.create_session()
+        chat = db_sess.query(Chats).filter((
+            Chats.users == f'{user_id}, {current_user.id}') | (Chats.users == f'{current_user.id}, {user_id}')).first()
+        if chat:
+            id = chat.id
+        else:
+            chat = Chats(
+                users=f'{current_user.id}, {user_id}'
+            )
+            db_sess.add(chat)
+            db_sess.commit()
+            db_sess = db_session.create_session()
+            chat = db_sess.query(Chats).filter((
+                Chats.users == f'{user_id}, {current_user.id}') | (Chats.users == f'{current_user.id}, {user_id}')).first()
+            id = chat.id
+
+        messages = db_sess.query(Message).filter(Message.chat_id == id).all()
+    friends = db_sess.query(User).filter(current_user.id != User.id).all()
+    return render_template('message.html', messages=messages, friends=friends)
 
 
 @app.route('/logout')
@@ -257,6 +303,7 @@ def confirm_email(email):
 def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
+        print(2121)
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
                                    form=form,
@@ -368,8 +415,16 @@ def follow_user(user_id):
         return jsonify({'followers': 1, "followed": True})
 
 
+@app.route('/message/', methods=['GET', 'POST'])
+def message_1():
+
+    db_sess = db_session.create_session()
+    friends = db_sess.query(User).filter(current_user.id != User.id).all()
+    return render_template('message.html', friends=friends)
+
+
 def main():
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=8081, host='127.0.0.1')
 
 
 if __name__ == '__main__':
