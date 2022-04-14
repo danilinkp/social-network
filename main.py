@@ -1,8 +1,11 @@
+import random
+
 from flask import Flask, render_template, request, session, url_for, jsonify, send_from_directory
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.posts import Posts
+from data.send_email import send_email
 from data.users import User
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
@@ -188,7 +191,7 @@ def crop():
             db_sess.commit()
 
         return redirect(f'/profile/{current_user.name}')
-    print(123)
+
 
     return render_template('crop.html')
 
@@ -219,6 +222,35 @@ def login():
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.route('/register_email', methods=['GET', 'POST'])
+def reqister_email():
+    if request.method == 'POST':
+        if request.form['mail_user'] != '':
+            email = request.form['mail_user']
+            return redirect(f"/confirm_email/{email}")
+    return render_template('register_email.html', title='Регистрация')
+
+
+@app.route('/confirm_email/<email>', methods=['GET', 'POST'])
+def confirm_email(email):
+    if request.method == 'POST':
+        if "code_user" in list(dict(request.form).keys())[0]:
+            code = list(dict(request.form).keys())[0].split('-')[1]
+            if code == request.form[list(dict(request.form).keys())[0]]:
+                return redirect('/register')
+            else:
+                return render_template('mail_confirmation.html', code=code)
+
+    else:
+        message = random.randint(10000, 99999)
+
+        send_email(str(message), email)
+
+
+        return render_template('mail_confirmation.html', code=message)
+    return render_template('mail_confirmation.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])

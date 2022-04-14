@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id="logreg-forms">
+    <div class="form-signin">
+         <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Register</h1>
+        <form action="" method="post">
+            <input class="form-control" placeholder="Contact email"
+                                                               name="mail_user" id="contact_email" type="email"
+                                                               title="Contact email (format: xxx@xxx.xxx)"
+                                                               pattern="[a-zA-Z0-9!#$%&amp;'*+\/=?^_`{|}~.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*">
+
+             <button type="submit" class="btn btn-warning" style="width: 100%;"><i
+                                            class="fa-solid fa-chevron-right"></i></button>
+
+        </form>
+    </div>
+</div>
+{% endblock %}
