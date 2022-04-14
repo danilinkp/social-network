@@ -15,6 +15,7 @@ from forms.loginform import LoginForm
 from forms.user import RegisterForm
 from flask_avatars import Avatars
 import os
+import random
 
 
 app = Flask(__name__)
@@ -282,51 +283,57 @@ def reqister_email():
 @app.route('/confirm_email/<email>', methods=['GET', 'POST'])
 def confirm_email(email):
     if request.method == 'POST':
+        if "back" in list(dict(request.form).keys()):
+            return redirect('/register_email')
+        if "return_code" in list(dict(request.form).keys()):
+            return redirect(f'/confirm_email/{email}')
+
         if "code_user" in list(dict(request.form).keys())[0]:
             code = list(dict(request.form).keys())[0].split('-')[1]
             if code == request.form[list(dict(request.form).keys())[0]]:
-                return redirect('/register')
+                return redirect(f'/register/{email}',)
             else:
                 return render_template('mail_confirmation.html', code=code)
 
     else:
         message = random.randint(10000, 99999)
-
         send_email(str(message), email)
-
 
         return render_template('mail_confirmation.html', code=message)
     return render_template('mail_confirmation.html')
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def reqister():
+@app.route('/register/<email>', methods=['GET', 'POST'])
+def reqister(email):
     form = RegisterForm()
     if form.validate_on_submit():
-        print(2121)
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
                                    form=form,
+                                   email=email,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
+        if db_sess.query(User).filter(User.email == email).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
+                                   email=email,
                                    message="Пользователь с такой почтой уже есть")
         if db_sess.query(User).filter(User.name == form.name.data).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
+                                   email=email,
                                    message="Пользователь с таким именем уже есть")
 
         user = User(
             name=form.name.data,
-            email=form.email.data
+            email=email
         )
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
+    print(1)
+    return render_template('register.html',  email=email, title='Регистрация', form=form)
 
 
 @app.route('/like_post/<post_id>', methods=['POST'])

@@ -6,9 +6,17 @@
          <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Confirm email</h1>
         <form action="" method="post">
             <input class="form-control" placeholder="Submit code" name="code_user-{{code}}" id="code_user">
+            <br>
 
-             <button type="submit" class="btn btn-warning" style="width: 100%;"><i
+
+             <button type="submit" class="btn btn-primary" style="width: 100%;"><i
                                             class="fa-solid fa-chevron-right"></i></button>
+            <br>
+            <br>
+            <button type="submit" name='back' class="btn btn-danger" style="width: 100%;"><i class="fa-solid fa-rotate-left"></i></button>
+            <br>
+            <br>
+            <button type="submit" name='return_code' class="btn btn-danger" style="width: 100%;">Отправить код еще раз</button>
             <div style="color: white;">На вашу почту отправлен код</div>
 
         </form>
