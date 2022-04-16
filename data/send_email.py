@@ -8,7 +8,8 @@ def send_email(message, email):
     server.starttls()
     try:
         server.login(sender, password)
-        print(email)
         server.sendmail(sender, email, message)
+
+        print(message)
     except Exception as  _ex:
         print(_ex)

@@ -56,12 +56,11 @@ def profile(name):
         posts = db_sess.query(Posts).filter(user.id == Posts.user_id)
         number = len(list(posts))
     else:
-        return redirect(f'/base')
+        return redirect(f'/')
     if request.method == 'POST':
         try:
 
             data = dict(request.form)
-            print(data)
             keys = list(data.keys())[0]
         except Exception:
             pass
@@ -148,8 +147,10 @@ def profile(name):
             if request.form['about'] or not str(request.files['file1']).split()[1] == "''":
                 data = request.files
                 raw_filename = ''
-                if keys_image == 'file1':
+                print(str(image_dict[keys_image]).split("'"))
+                if str(image_dict[keys_image]).split("'")[1] != '':
                     app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/post_image')
+                    print(12312)
 
                     raw_filename = avatars.save_avatar(image_dict[keys_image])
                 posts1 = Posts(content=request.form['about'],
@@ -219,6 +220,8 @@ def login():
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
+    if request.method == 'POST':
+        print(request.form)
     return render_template('login.html', title='Авторизация', form=form)
 
 
@@ -245,7 +248,7 @@ def message(user_id):
         db_sess = db_session.create_session()
         chat = db_sess.query(Chats).filter((
                                                    Chats.users == f'{user_id}, {current_user.id}') | (
-                                                       Chats.users == f'{current_user.id}, {user_id}')).first()
+                                                   Chats.users == f'{current_user.id}, {user_id}')).first()
         if chat:
             id = chat.id
         else:
@@ -257,7 +260,7 @@ def message(user_id):
             db_sess = db_session.create_session()
             chat = db_sess.query(Chats).filter((
                                                        Chats.users == f'{user_id}, {current_user.id}') | (
-                                                           Chats.users == f'{current_user.id}, {user_id}')).first()
+                                                       Chats.users == f'{current_user.id}, {user_id}')).first()
             id = chat.id
 
         messages = db_sess.query(Message).filter(Message.chat_id == id).all()
@@ -430,6 +433,61 @@ def message_1():
     return render_template('message.html', friends=friends)
 
 
+@app.route('/forgot_password/', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        if 'mail_user' in list(dict(request.form).keys()):
+            if dict(request.form)['mail_user'] != '':
+                email = dict(request.form)['mail_user']
+                db_sess = db_session.create_session()
+                if db_sess.query(User).filter(User.email == email).first():
+
+                    return redirect(f'/confirm_forgot_password/{email}')
+
+                else:
+                    return render_template('forgot_password_email.html', message='User with this email does not exist')
+
+    return render_template('forgot_password_email.html')
+
+
+@app.route('/confirm_forgot_password/<user_email>', methods=['GET', 'POST'])
+def confirm_forgot_password(user_email):
+    if request.method == 'POST':
+        if "back" in list(dict(request.form).keys()):
+            return redirect('/login')
+        if "return_code" in list(dict(request.form).keys()):
+            return redirect(f'/confirm_forgot_password/{user_email}')
+
+        if "code_user" in list(dict(request.form).keys())[0]:
+            code = list(dict(request.form).keys())[0].split('-')[1]
+            if code == request.form[list(dict(request.form).keys())[0]]:
+                return redirect(f'/new_password_forgot_password/{user_email}')
+            else:
+                return render_template('mail_confirmation.html', code=code)
+
+    else:
+        message = random.randint(10000, 99999)
+        send_email(str(message), user_email)
+        return render_template('mail_confirmation.html', code=str(message))
+
+    return render_template('mail_confirmation.html')
+
+
+@app.route('/new_password_forgot_password/<user_email>', methods=['GET', 'POST'])
+def new_password_forgot_password(user_email):
+    if request.method == 'POST':
+        if request.form['new_password'] == request.form['repeat_password']:
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.email == user_email).first()
+            user.set_password(request.form['new_password'])
+            db_sess.commit()
+            return redirect('/login')
+        else:
+            return render_template('new_password.html', message='Wrong password')
+
+    return render_template('new_password.html')
+
+
 @app.route('/settings/', methods=['GET', 'POST'])
 def settings():
     if request.method == 'POST':
@@ -448,12 +506,50 @@ def settings():
                 return render_template('setting.html', friends=friends, message='Passwords do not match')
             return render_template('setting.html', friends=friends, message='Wrong password')
         else:
-            print(1)
+            return redirect('/delete_account')
     return render_template('setting.html', friends=friends)
 
 
+@app.route('/delete_account/', methods=['GET', 'POST'])
+def delete_account():
+    if request.method == 'POST':
+        if 'delete_button' in list(dict(request.form).keys()):
+            data = request.form
+            db_sess = db_session.create_session()
+            now_password = data['last_password']
+            user = db_sess.query(User).filter(User.id == current_user.id).first()
+            if user.check_password(now_password):
+                print('Удаление ...')
+                db_sess = db_session.create_session()
+                posts = db_sess.query(Posts).filter(Posts.user == current_user).all()
+                if posts:
+                    for i in posts:
+                        if i.image:
+                            path = os.path.join(f'{os.getcwd()}/static/post_image')
+                            os.remove(path + '/' + i.image)
+                        if i:
+                            db_sess.delete(i)
+                            db_sess.commit()
+                db_sess = db_session.create_session()
+                user_delete = db_sess.query(User).filter(User.id == current_user.id).first()
+                try:
+                    if user_delete.image != 'default.jpg':
+                        path = os.path.join(f'{os.getcwd()}/static/avatars')
+                        os.remove(path + '/' + user_delete.image)
+                except Exception:
+                    pass
+                db_sess.delete(user_delete)
+                db_sess.commit()
+
+                return redirect('/')
+            return render_template('delete_account.html', message='Wrong password')
+        else:
+            return render_template('delete_account.html', message="Click the button if you're sure")
+    return render_template('delete_account.html')
+
+
 def main():
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=8081, host='127.0.0.1')
 
 
 if __name__ == '__main__':

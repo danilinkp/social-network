@@ -27,7 +27,7 @@
              <p> {{ form.remember_me() }} {{ form.remember_me.label}}</p>
 
             <p>
-                <button class="btn btn-danger" style="align: right;">Forgot password</button>
+                <a type="button" class="btn btn-danger" href='/forgot_password' style="align: right;">Forgot password</a>
                 {{ form.submit(type="submit", class="btn btn-primary") }}
 
             </p>
