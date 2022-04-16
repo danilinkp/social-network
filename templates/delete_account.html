@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div id="logreg-forms">
+    <div class="form-signin">
+         <h1 class="h3 mb-3 font-weight-normal" style="text-align: center; color: red;">Delete account</h1>
+        <form method="post" enctype="multipart/form-data">
+            <span style="color: red;">Are you sure you want to delete your account?</span>
+            <br>
+            <span style="color: red;">After deletion, it will be impossible to resume the data.</span>
+            <br>
+            <br>
+            <input class="form-control" placeholder="Password" name="last_password">
+             <br>
+            <br>
+             <input type="checkbox" name='delete_agree'
+                                                   class="form-check-input" id="exampleCheck1" required>
+                                            <label class="form-check-label" style="color: red;" for="exampleCheck1">I
+                                                agree</label>
+            <br>
+             <br>
+            <button type="submit" name="delete_button" style="width: 100%;" class="btn btn-danger btn-circle"><i
+                                                    class="fa-solid fa-trash"></i></button>
+        </form>
+        <div style="color: red;">{{message}}</div>
+    </div>
+</div>
+{% endblock %}
