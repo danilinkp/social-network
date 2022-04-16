@@ -158,7 +158,8 @@ def profile(name):
                 session['raw_filename'] = raw_filename
                 return redirect(url_for('crop'))
 
-    return render_template('profile.html', posts=posts, count=number, user=user, followings_count=followings_count, followers_count=followers_count)
+    return render_template('profile.html', posts=posts, count=number, user=user, followings_count=followings_count,
+                           followers_count=followers_count)
 
 
 @app.route('/crop', methods=['GET', 'POST'])
@@ -223,6 +224,7 @@ def message(user_id):
         message = request.form['message_user_input']
         if message:
             db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.id == user_id).first()
             chat = db_sess.query(Chats).filter((
                                                        Chats.users == f'{user_id}, {current_user.id}') | (
                                                        Chats.users == f'{current_user.id}, {user_id}')).first()
@@ -368,6 +370,51 @@ def friends():
         users = db_sess.query(User).filter(User.id != current_user.id).all()
 
     return render_template('friends.html', title='Friends', users=users)
+
+
+def new():
+    db_sess = db_session.create_session()
+    user = User(
+        name='hjkhjhjk',
+        email="fdsf@@@"
+    )
+    user.set_password('sdfsdf')
+    db_sess.add(user)
+    db_sess.commit()
+
+
+@app.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin():
+    db_sess = db_session.create_session()
+    return render_template('admin.html')
+
+
+@app.route('/admin/users', methods=['GET', 'POST'])
+@login_required
+def admin_users():
+    db_sess = db_session.create_session()
+    users = db_sess.query(User).all()
+
+    return render_template('admin.html', users=users)
+
+
+@app.route('/admin/posts', methods=['GET', 'POST'])
+@login_required
+def admin_posts():
+    db_sess = db_session.create_session()
+    posts = db_sess.query(Posts).all()
+
+    return render_template('admin.html', posts=posts)
+
+
+@app.route('/admin/message', methods=['GET', 'POST'])
+@login_required
+def admin_message():
+    db_sess = db_session.create_session()
+    messages = db_sess.query(Message).all()
+
+    return render_template('admin.html', messages=messages)
 
 
 @app.route('/news', methods=['GET', 'POST'])

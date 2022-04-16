@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row" style="height: 85vh; background-color: #2227; border-radius: 5%; padding-left: auto; padding-right: auto;" >
+
+
+
+                <div id="plist" class="people-list" style="margin-left: auto; margin-right: auto;">
+                    <ul class="list-unstyled chat-list">
+                        {% for user in friends%}
+                        {% set ids = current_user.followings.split(', ') %}
+                        {% set list1 = user.followers.split(', ') %}
+                        {% set user_id_ = current_user.id | string() %}
+                            {% if user.id | string() in ids%}
+                        <a href="/message/{{ user.id }}">
+                            <li class="clearfix">
+                                <img src="../static/avatars/{{user.image}}" alt="avatar">
+                                    <div class="about">
+                                        <div class="name" style="color: white;" >{{user.name}}</div>
+                                    </div>
+                            </li>
+                        </a>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+
+            </div>
+</div>
+
+{% endblock %}
