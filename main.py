@@ -41,14 +41,20 @@ def profile(name):
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         user = db_sess.query(User).filter(User.name == name).first()
-        name = user.name
-        image = user.image
-        about = user.about
-        github = user.github
-        mail = user.second_email
-        id = user.id
         posts = db_sess.query(Posts).filter(user.id == Posts.user_id)
         number = len(list(posts))
+        followings_count = user.followings.split(', ')
+        if followings_count[0] == '':
+            followings_count = 0
+        else:
+            followings_count = len(followings_count)
+        followers_count = user.followers.split(', ')
+        if followers_count[0] == '':
+            followers_count = 0
+        else:
+            followers_count = len(followers_count)
+
+
     else:
         return redirect('/')
     if request.method == 'POST':
@@ -152,8 +158,7 @@ def profile(name):
                 session['raw_filename'] = raw_filename
                 return redirect(url_for('crop'))
 
-    return render_template('profile.html', name=name, about=about, id=id, posts=posts, image=image, github=github,
-                           mail=mail, count=number, user=user)
+    return render_template('profile.html', posts=posts, count=number, user=user, followings_count=followings_count, followers_count=followers_count)
 
 
 @app.route('/crop', methods=['GET', 'POST'])

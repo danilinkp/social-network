@@ -24,9 +24,24 @@ function follow(userId) {
     .then((data) => {
       followCount.innerHTML = data["followers"];
       if (data["followed"] === true) {
-        followButton.innerHTML    = "Unfollow";
+        followButton.innerHTML   = "Unfollow";
       } else {
-        followButton.innerHTML    = "Follow";
+        followButton.innerHTML   = "Follow";
+      }
+    })
+    .catch((e) => console.log(e));
+}
+
+function follow1(userId) {
+  const followButton = document.getElementById(`follow2-button-${userId}`);
+
+  fetch(`/follow_user/${userId}`, { method: "POST" })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data["followed"] === true) {
+        followButton.innerHTML   = "Unfollow";
+      } else {
+        followButton.innerHTML   = "Follow";
       }
     })
     .catch((e) => console.log(e));
