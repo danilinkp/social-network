@@ -17,7 +17,6 @@ from flask_avatars import Avatars
 import os
 import random
 
-
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__name__))
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -26,7 +25,6 @@ app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
 login_manager = LoginManager()
 login_manager.init_app(app)
 avatars = Avatars(app)
-
 
 
 @app.route('/avatars/<path:filename>')
@@ -231,7 +229,7 @@ def message(user_id):
             db_sess = db_session.create_session()
             chat = db_sess.query(Chats).filter((
                                                        Chats.users == f'{user_id}, {current_user.id}') | (
-                                                           Chats.users == f'{current_user.id}, {user_id}')).first()
+                                                       Chats.users == f'{current_user.id}, {user_id}')).first()
             id = chat.id
             message_user = Message(
                 content=message, chat_id=id, user_id=current_user.id
@@ -245,7 +243,8 @@ def message(user_id):
     else:
         db_sess = db_session.create_session()
         chat = db_sess.query(Chats).filter((
-            Chats.users == f'{user_id}, {current_user.id}') | (Chats.users == f'{current_user.id}, {user_id}')).first()
+                                                   Chats.users == f'{user_id}, {current_user.id}') | (
+                                                       Chats.users == f'{current_user.id}, {user_id}')).first()
         if chat:
             id = chat.id
         else:
@@ -256,7 +255,8 @@ def message(user_id):
             db_sess.commit()
             db_sess = db_session.create_session()
             chat = db_sess.query(Chats).filter((
-                Chats.users == f'{user_id}, {current_user.id}') | (Chats.users == f'{current_user.id}, {user_id}')).first()
+                                                       Chats.users == f'{user_id}, {current_user.id}') | (
+                                                           Chats.users == f'{current_user.id}, {user_id}')).first()
             id = chat.id
 
         messages = db_sess.query(Message).filter(Message.chat_id == id).all()
@@ -291,7 +291,7 @@ def confirm_email(email):
         if "code_user" in list(dict(request.form).keys())[0]:
             code = list(dict(request.form).keys())[0].split('-')[1]
             if code == request.form[list(dict(request.form).keys())[0]]:
-                return redirect(f'/register/{email}',)
+                return redirect(f'/register/{email}', )
             else:
                 return render_template('mail_confirmation.html', code=code)
 
@@ -333,7 +333,7 @@ def reqister(email):
         db_sess.commit()
         return redirect('/login')
     print(1)
-    return render_template('register.html',  email=email, title='Регистрация', form=form)
+    return render_template('register.html', email=email, title='Регистрация', form=form)
 
 
 @app.route('/like_post/<post_id>', methods=['POST'])
@@ -424,14 +424,35 @@ def follow_user(user_id):
 
 @app.route('/message/', methods=['GET', 'POST'])
 def message_1():
-
     db_sess = db_session.create_session()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
     return render_template('message.html', friends=friends)
 
 
+@app.route('/settings/', methods=['GET', 'POST'])
+def settings():
+    if request.method == 'POST':
+        if 'change_password' in list(dict(request.form).keys()):
+            data = request.form
+            now_password = data['last_password']
+            new_password = data['new_password']
+            repeat_password = data['repeat_password']
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.id == current_user.id).first()
+            if user.check_password(now_password):
+                if new_password == repeat_password and new_password != '':
+                    user.set_password(new_password)
+                    db_sess.commit()
+                    return redirect(f'/profile/{current_user.name}')
+                return render_template('setting.html', friends=friends, message='Passwords do not match')
+            return render_template('setting.html', friends=friends, message='Wrong password')
+        else:
+            print(1)
+    return render_template('setting.html', friends=friends)
+
+
 def main():
-    app.run(port=8081, host='127.0.0.1')
+    app.run(port=8080, host='127.0.0.1')
 
 
 if __name__ == '__main__':
