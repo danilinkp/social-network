@@ -121,8 +121,12 @@
                         </form>
 
                         {% else %}
-                        <button class="btn btn-primary">Follow</button>
-                        <button class="btn btn-outline-primary">Message</button>
+                            {% set list1 = user.followers.split(', ') %}
+                            {% set user_id_ = current_user.id | string() %}
+
+                            <button class="btn btn-primary" name="follow" id="follow-button-{{user.id}}" onclick="follow({{id}})">{% if user_id_ in list1 %} Unfollow {% else %} Follow {% endif %}</button>
+                            <button class="btn btn-outline-primary">Message</button>
+
                         {% endif %}
                     </div>
                 </div>
@@ -360,21 +364,17 @@
                             <form method="post" enctype="multipart/form-data">
                                 {% set list1 = item.likes.split(', ') %}
                                 {% set user_id_ = current_user.id | string() %}
-                                {% if user_id_ in list1 %}
+
+
 
                                     <i
-                                      class="fa-solid fa-heart text-danger"
-                                      id="like-button-{{item.id}}"
-                                      onclick="like({{item.id}})"
-                                    ></i>
-                                {% else %}
-                                    <i
-                                      class="fa-solid fa-heart"
+                                      class="{% if user_id_ in list1 %} fa-solid fa-heart text-danger {% else %} fa-solid fa-heart {% endif %}"
                                       id="like-button-{{item.id}}"
                                       onclick="like({{item.id}})"
                                     ></i>
 
-                                {% endif %}
+
+
                                 <span class="stats-total" id="likes-count-{{item.id}}">{{ item.likes|length }}</span>
 
 

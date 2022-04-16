@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div>
+            <ul class="timeline">
+                {% for item in posts|reverse%}
+                <li>
+                    <div class="timeline-time">
+                        <span class="time" style="color: white;">{{item.created_date.strftime('%d %B %Y')}}</span>
+                        <span class="time" style="color: white;">{{item.created_date.strftime('%H:%M')}}</span>
+
+                    </div>
+                    <div class="timeline-icon">
+                        <a href="#"></a>
+                    </div>
+                    <div class="timeline-body">
+                        <div class="timeline-header">
+                            <span class="userimage"><a href="/profile/{{item.user.name}}"><img src="../static/avatars/{{item.user.image}}" alt=""></a></span>
+
+
+                            <span class="username"><a href="/profile/{{item.user.name}}">{{item.user.name}}</a></span>
+
+
+                        </div>
+
+
+                        <div class="timeline-content">
+
+                            <p>
+                                <img src="../static/post_image/{{item.image}}" alt="">
+                                {{item.content}}
+                            </p>
+                        </div>
+
+                        <div class="timeline-footer">
+                            <form method="post" enctype="multipart/form-data">
+                                {% set list1 = item.likes.split(', ') %}
+                                {% set user_id_ = current_user.id | string() %}
+                                {% if user_id_ in list1 %}
+
+                                    <i
+                                      class="fa-solid fa-heart text-danger"
+                                      id="like-button-{{item.id}}"
+                                      onclick="like({{item.id}})"
+                                    ></i>
+                                {% else %}
+                                    <i
+                                      class="fa-solid fa-heart"
+                                      id="like-button-{{item.id}}"
+                                      onclick="like({{item.id}})"
+                                    ></i>
+
+                                {% endif %}
+                                <span class="stats-total" id="likes-count-{{item.id}}">{{ item.likes|length }}</span>
+
+
+
+
+
+                            </form>
+                        </div>
+                    </div>
+
+                    <br>
+
+
+                </li>
+
+                {% endfor %}
+            </ul>
+
+
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+                crossorigin="anonymous"></script>
+{% endblock %}

@@ -1,17 +1,12 @@
-import random
-
-import requests
 from flask import Flask, render_template, request, session, url_for, send_from_directory, jsonify
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.chat import Chats
-from data.friends import Friend
 from data.messages import Message
 from data.posts import Posts
 from data.send_email import send_email
 from data.users import User
-from forms.friends_search_form import FriendsSearchForm
 from forms.loginform import LoginForm
 from forms.user import RegisterForm
 from flask_avatars import Avatars
@@ -30,7 +25,6 @@ avatars = Avatars(app)
 
 @app.route('/avatars/<path:filename>')
 def get_avatar(filename):
-    print(filename)
     app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
     return send_from_directory(app.config['AVATARS_SAVE_PATH'], filename)
 
@@ -42,9 +36,9 @@ def index():
 
 
 @app.route('/profile/<string:name>', methods=['GET', 'POST'])
+@login_required
 def profile(name):
     db_sess = db_session.create_session()
-
     if current_user.is_authenticated:
         user = db_sess.query(User).filter(User.name == name).first()
         name = user.name
@@ -56,8 +50,9 @@ def profile(name):
         posts = db_sess.query(Posts).filter(user.id == Posts.user_id)
         number = len(list(posts))
     else:
-        return redirect(f'/')
+        return redirect('/')
     if request.method == 'POST':
+
         try:
 
             data = dict(request.form)
@@ -93,13 +88,10 @@ def profile(name):
 
                 user = db_sess.query(User).filter(User.id == current_user.id).first()
                 if data['about_user']:
-                    print(1)
                     user.about = data['about_user']
                 if data['git_hub']:
-                    print(2)
                     user.github = data['git_hub']
                 if data['mail_user']:
-                    print(3)
                     user.second_email = data['mail_user']
                 db_sess.commit()
                 return redirect(f'/profile/{current_user.name}')
@@ -120,16 +112,13 @@ def profile(name):
                 if not str(request.files[keys_image]).split()[1] == "''":
                     try:
                         if not posts.image:
-                            print(1)
                             app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/post_image')
                             image = avatars.save_avatar(image_dict[keys_image])
 
                         else:
-                            print(2)
                             path = os.path.join(f'{os.getcwd()}/static/post_image')
                             os.remove(path + '/' + posts.image)
                             app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/post_image')
-                            print(image_dict[keys_image])
                             image = avatars.save_avatar(image_dict[keys_image])
                     except Exception:
                         image = posts.image
@@ -147,10 +136,8 @@ def profile(name):
             if request.form['about'] or not str(request.files['file1']).split()[1] == "''":
                 data = request.files
                 raw_filename = ''
-                print(str(image_dict[keys_image]).split("'"))
                 if str(image_dict[keys_image]).split("'")[1] != '':
                     app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/post_image')
-                    print(12312)
 
                     raw_filename = avatars.save_avatar(image_dict[keys_image])
                 posts1 = Posts(content=request.form['about'],
@@ -166,10 +153,11 @@ def profile(name):
                 return redirect(url_for('crop'))
 
     return render_template('profile.html', name=name, about=about, id=id, posts=posts, image=image, github=github,
-                           mail=mail, count=number)
+                           mail=mail, count=number, user=user)
 
 
 @app.route('/crop', methods=['GET', 'POST'])
+@login_required
 def crop():
     if request.method == 'POST':
         x = request.form.get('x')
@@ -220,12 +208,11 @@ def login():
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
-    if request.method == 'POST':
-        print(request.form)
     return render_template('login.html', title='Авторизация', form=form)
 
 
 @app.route('/message/<user_id>', methods=['GET', 'POST'])
+@login_required
 def message(user_id):
     if request.method == 'POST':
         message = request.form['message_user_input']
@@ -241,8 +228,6 @@ def message(user_id):
             db_sess.add(message_user)
             db_sess.commit()
         return redirect(f"/message/{user_id}")
-
-
 
     else:
         db_sess = db_session.create_session()
@@ -336,7 +321,6 @@ def reqister(email):
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
-    print(1)
     return render_template('register.html', email=email, title='Регистрация', form=form)
 
 
@@ -368,6 +352,7 @@ def like(post_id):
 
 
 @app.route('/friends', methods=['GET', 'POST'])
+@login_required
 def friends():
     db_sess = db_session.create_session()
     if request.method == 'POST':
@@ -380,7 +365,16 @@ def friends():
     return render_template('friends.html', title='Friends', users=users)
 
 
+@app.route('/news', methods=['GET', 'POST'])
+@login_required
+def news():
+    db_sess = db_session.create_session()
+    posts = db_sess.query(Posts).filter(Posts.user_id != current_user.id)
+    return render_template('news.html', title='Friends', posts=posts)
+
+
 @app.route('/follow_user/<user_id>', methods=['GET', 'POST'])
+@login_required
 def follow_user(user_id):
     db_sess = db_session.create_session()
     my_user = db_sess.query(User).filter(User.id == current_user.id).first()
@@ -427,6 +421,7 @@ def follow_user(user_id):
 
 
 @app.route('/message/', methods=['GET', 'POST'])
+@login_required
 def message_1():
     db_sess = db_session.create_session()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
@@ -489,6 +484,7 @@ def new_password_forgot_password(user_email):
 
 
 @app.route('/settings/', methods=['GET', 'POST'])
+@login_required
 def settings():
     if request.method == 'POST':
         if 'change_password' in list(dict(request.form).keys()):
@@ -511,6 +507,7 @@ def settings():
 
 
 @app.route('/delete_account/', methods=['GET', 'POST'])
+@login_required
 def delete_account():
     if request.method == 'POST':
         if 'delete_button' in list(dict(request.form).keys()):
@@ -549,7 +546,7 @@ def delete_account():
 
 
 def main():
-    app.run(port=8081, host='127.0.0.1')
+    app.run(port=8083, host='127.0.0.1')
 
 
 if __name__ == '__main__':
