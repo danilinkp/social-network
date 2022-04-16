@@ -555,6 +555,10 @@ body {
 
 }
 
+
+
+
+
 .people-list .chat-list li:hover {
     background: #323232;
     cursor: pointer
@@ -577,6 +581,10 @@ body {
     float: left;
     border-radius: 50%
 }
+
+
+
+
 
 .chat .chat-header {
     padding: 15px 20px;

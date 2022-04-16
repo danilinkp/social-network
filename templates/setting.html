@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id="logreg-forms">
+    <div class="form-signin">
+         <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Confirm email</h1>
+        <form method="post" enctype="multipart/form-data">
+            <input class="form-control" placeholder="Password" name="last_password">
+            <input class="form-control" placeholder="New password" name="new_password">
+            <input class="form-control" placeholder="Repeat new password" name="repeat_password">
+            <br>
+
+
+             <button type="submit" class="btn btn-primary" style="width: 100%;" name="change_password"><i
+                                            class="fa-solid fa-chevron-right"></i></button>
+            <br>
+            <br>
+            <button type="submit" name='return_code' class="btn btn-danger" style="width: 100%;">Отправить код еще раз</button>
+        </form>
+        <form method="post" enctype="multipart/form-data">
+                    <div class="modal fade" id="exampleModal" tabindex="-1"
+                         aria-labelledby="exampleModal-Label"
+                         aria-hidden="true">
+                        <div class="modal-dialog ">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModal-Label">Deletion</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Закрыть"></button>
+                                </div>
+                                <div class="modal-body bg-dark">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <span style="color: white;">Are you sure you want to delete the post?</span>
+                                            <br>
+                                            <span style="color: white;">If you delete a post, you won't be able to get it back.</span>
+                                        </div>
+                                        <br>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" name='delete_agree'
+                                                   class="form-check-input" id="exampleCheck1" required>
+                                            <label class="form-check-label" style="color: green;" for="exampleCheck1">I
+                                                agree</label>
+                                        </div>
+                                        <div class="row">
+
+                                            <button type="submit" class="btn btn-danger btn-circle"><i
+                                                    class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+        <div style="color: red;">{{message}}</div>
+    </div>
+</div>
+{% endblock %}

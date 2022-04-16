@@ -8,15 +8,6 @@
             {{ form.hidden_tag() }}
             <p style="color: white;">
 
-                {{ form.email(class="form-control", type="email", placeholder="Email address") }}<br>
-                {% for error in form.email.errors %}
-                    <p class="alert alert-danger" role="alert">
-                        {{ error }}
-                    </p>
-                {% endfor %}
-            </p>
-            <p style="color: white;">
-
                 {{ form.name(class="form-control", placeholder="Name") }}<br>
                 {% for error in form.name.errors %}
                     <p class="alert alert-danger" role="alert">
