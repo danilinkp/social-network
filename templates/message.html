@@ -14,15 +14,20 @@
                         <input  type="text" class="form-control" placeholder="Search...">
                     </div>
                     <ul class="list-unstyled chat-list mt-2 mb-0">
-                        {% for friend in friends %}
+                        {% for user in friends%}
+                        {% set ids = current_user.followings.split(', ') %}
+                        {% set list1 = user.followers.split(', ') %}
+                        {% set user_id_ = current_user.id | string() %}
+                            {% if user.id | string() in ids%}
+                        <a href="/message/{{ user.id }}">
                             <li class="clearfix">
-                                <img src="../static/avatars/{{friend.image}}" alt="avatar">
-
-                                <div class="about">
-                                    <div class="name" style="color: white;" >{{friend.name}}</div>
-
-                                </div>
+                                <img src="../static/avatars/{{user.image}}" alt="avatar">
+                                    <div class="about">
+                                        <div class="name" style="color: white;" >{{user.name}}</div>
+                                    </div>
                             </li>
+                        </a>
+                            {% endif %}
                         {% endfor %}
                     </ul>
                 </div>
@@ -64,7 +69,7 @@
                     </div>
                     <form method="post" enctype="multipart/form-data">
                         <div class="chat-message clearfix" id="for_message_input">
-                            <div class="input-group mb-0" id="message_input" style=" width: 77%;">
+                            <div class="input-group mb-0" id="message_input" style=" width: 75%;">
 
                                 <input type="text" name='message_user_input' class="form-control" placeholder="Enter text here...">
                                 <div class="input-group-prepend">
