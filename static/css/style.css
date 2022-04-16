@@ -719,3 +719,14 @@ body {
   right: 0;
   width: 100%;
 }
+
+.news_buttons{
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.news_buttons > button{
+    margin: 10px;
+}

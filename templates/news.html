@@ -1,32 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
-
+<form method="post" enctype="multipart/form-data">
+    <div class="news_buttons">
+        <button type="submit" class="btn btn-primary" name="friends">Friend's news</button>
+        <button type="submit" class="btn btn-primary" name="all">All news</button>
+        <button type="submit" class="btn btn-primary" name="api">News in Russia</button>
+    </div>
+</form>
 
 <div>
             <ul class="timeline">
                 {% for item in posts|reverse%}
+                {% if posts %}
                 <li>
                     <div class="timeline-time">
                         <span class="time" style="color: white;">{{item.created_date.strftime('%d %B %Y')}}</span>
                         <span class="time" style="color: white;">{{item.created_date.strftime('%H:%M')}}</span>
 
                     </div>
+
                     <div class="timeline-icon">
                         <a href="#"></a>
                     </div>
+
                     <div class="timeline-body">
                         <div class="timeline-header">
                             <span class="userimage"><a href="/profile/{{item.user.name}}"><img src="../static/avatars/{{item.user.image}}" alt=""></a></span>
-
-
                             <span class="username"><a href="/profile/{{item.user.name}}">{{item.user.name}}</a></span>
-
-
                         </div>
 
-
                         <div class="timeline-content">
-
                             <p>
                                 <img src="../static/post_image/{{item.image}}" alt="">
                                 {{item.content}}
@@ -50,28 +53,26 @@
                                       id="like-button-{{item.id}}"
                                       onclick="like({{item.id}})"
                                     ></i>
-
                                 {% endif %}
                                 <span class="stats-total" id="likes-count-{{item.id}}">{{ item.likes|length }}</span>
-
-
-
-
-
                             </form>
                         </div>
                     </div>
-
                     <br>
-
-
                 </li>
-
+                {% else %}
+                    <div class="friends__error">
+                        <h1 style="color: white;">Nothing found</h1>
+                        <a href="/news">Click here to see news of all users</a>
+                    </div>
+                {% endif %}
                 {% endfor %}
             </ul>
-
 
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
                 crossorigin="anonymous"></script>
+
+
+
 {% endblock %}

@@ -213,7 +213,7 @@ def login():
 
 @app.route('/message/<user_id>', methods=['GET', 'POST'])
 @login_required
-def message(user_id):
+def message_id(user_id):
     if request.method == 'POST':
         message = request.form['message_user_input']
         if message:
@@ -369,7 +369,24 @@ def friends():
 @login_required
 def news():
     db_sess = db_session.create_session()
-    posts = db_sess.query(Posts).filter(Posts.user_id != current_user.id)
+    if request.method == 'POST':
+        data = request.form
+        if 'all' in list(dict(data).keys()):
+            posts = db_sess.query(Posts).filter(Posts.user_id != current_user.id).all()
+        elif 'friends' in list(dict(data).keys()):
+            friends = current_user.followings.split(', ')
+            if friends[0] != '':
+                friends_id = list(map(int, friends))
+                posts = db_sess.query(Posts).filter(Posts.user_id.in_(friends_id)).all()
+            else:
+                posts = []
+    else:
+        friends = current_user.followings.split(', ')
+        if friends:
+            friends_id = list(map(int, friends))
+            posts = db_sess.query(Posts).filter(Posts.user_id.in_(friends_id)).all()
+        else:
+            posts = db_sess.query(Posts).filter(Posts.user_id != current_user.id).all()
     return render_template('news.html', title='Friends', posts=posts)
 
 
@@ -422,7 +439,7 @@ def follow_user(user_id):
 
 @app.route('/message/', methods=['GET', 'POST'])
 @login_required
-def message_1():
+def message():
     db_sess = db_session.create_session()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
     return render_template('message.html', friends=friends)
@@ -546,7 +563,7 @@ def delete_account():
 
 
 def main():
-    app.run(port=8083, host='127.0.0.1')
+    app.run(port=8080, host='127.0.0.1')
 
 
 if __name__ == '__main__':
