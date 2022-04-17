@@ -225,6 +225,8 @@ def login():
 @app.route('/message/<user_id>', methods=['GET', 'POST'])
 @login_required
 def message(user_id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == user_id).first()
     if request.method == 'POST':
         message = request.form['message_user_input']
         if message:
@@ -239,7 +241,7 @@ def message(user_id):
             )
             db_sess.add(message_user)
             db_sess.commit()
-        return redirect(f"/message/{user_id}")
+        return redirect(f"/message/{user_id}", user=user)
 
     else:
         db_sess = db_session.create_session()
@@ -262,7 +264,7 @@ def message(user_id):
 
         messages = db_sess.query(Message).filter(Message.chat_id == id).all()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
-    return render_template('message.html', messages=messages, friends=friends)
+    return render_template('message.html', messages=messages, friends=friends, user=user)
 
 
 @app.route('/logout')
@@ -377,17 +379,6 @@ def friends():
     return render_template('friends.html', title='Friends', users=users)
 
 
-def new():
-    db_sess = db_session.create_session()
-    user = User(
-        name='hjkhjhjk',
-        email="fdsf@@@"
-    )
-    user.set_password('sdfsdf')
-    db_sess.add(user)
-    db_sess.commit()
-
-
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
@@ -433,7 +424,6 @@ def admin_users():
 
             return redirect('/admin/users')
 
-
     return render_template('admin.html', users=users)
 
 
@@ -452,7 +442,6 @@ def admin_posts():
             user = db_sess.query(User).filter(User.id == current_user.id).first()
             now_count = user.post_count
             user.post_count = now_count - 1
-
 
             db_sess.delete(post)
             db_sess.commit()
@@ -538,7 +527,19 @@ def follow_user(user_id):
 def message_1():
     db_sess = db_session.create_session()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
-    return render_template('message.html', friends=friends)
+    return render_template('messages_friends.html', friends=friends)
+
+
+def new():
+    db_sess = db_session.create_session()
+    for i in range(200, 213):
+        user = User(
+            name=f'{i}hjkh32432jhjk',
+            email=f"32324{i}432@@@"
+        )
+        user.set_password(f'{i}233223')
+        db_sess.add(user)
+    db_sess.commit()
 
 
 @app.route('/forgot_password/', methods=['GET', 'POST'])
