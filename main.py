@@ -226,7 +226,7 @@ def login():
 @login_required
 def message_id(user_id):
     db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.id == user_id).first()
+    user1 = db_sess.query(User).filter(User.id == user_id).first()
     if request.method == 'POST':
         message = request.form['message_user_input']
         if message:
@@ -241,7 +241,7 @@ def message_id(user_id):
             )
             db_sess.add(message_user)
             db_sess.commit()
-        return redirect(f"/message/{user_id}", user=user)
+        return redirect(f"/message/{user_id}")
 
     else:
         db_sess = db_session.create_session()
@@ -264,7 +264,7 @@ def message_id(user_id):
 
         messages = db_sess.query(Message).filter(Message.chat_id == id).all()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
-    return render_template('message.html', messages=messages, friends=friends, user=user)
+    return render_template('message.html', messages=messages, friends=friends, user=user1)
 
 
 @app.route('/logout')
@@ -384,7 +384,6 @@ def friends():
 def admin():
     db_sess = db_session.create_session()
     if request.method == 'POST':
-        print(request.form)
         if 'mail_user' in list(dict(request.form).keys()):
             pass
     return render_template('admin.html')
@@ -492,7 +491,7 @@ def news():
             posts = []
     else:
         friends = current_user.followings.split(', ')
-        if friends:
+        if friends and friends[0] != '':
             friends_id = list(map(int, friends))
             posts = db_sess.query(Posts).filter(Posts.user_id.in_(friends_id)).all()
         else:
@@ -686,7 +685,7 @@ def delete_account():
 
 
 def main():
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=8082, host='127.0.0.1')
 
 
 if __name__ == '__main__':
