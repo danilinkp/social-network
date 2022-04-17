@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+    <div>
+        <a href="/admin/users" class="btn btn-danger" style="width: 33%;">Users</a>
+        <a href="/admin/posts" class="btn btn-danger" style="width: 33%;">Posts</a>
+        <a href="/admin/message" class="btn btn-danger" style="width: 33%;">Messages</a>
+    </div>
+    <div class="row"
+         style="height: 85vh; background-color: #2227; border-radius: 5%; padding-left: auto; padding-right: auto; overflow: auto;">
+        <div style="color: white; align-items: center;">
+            <form method="post" enctype="multipart/form-data">
+                {% if users %}
+
+                <div>
+                <form action="" class="friends__block">
+                    {% if users %}
+                    {% for user in users %}
+                    {% set ids = current_user.followings.split(', ') %}
+                    {% set list1 = user.followers.split(', ') %}
+                    {% set user_id_ = current_user.id | string() %}
+                    <div class="card_friend p-3"
+                         style="background-color: #2d333b; border: 1px solid white; border-radius: 10px;">
+                        <div class="object__block">
+                            <div class="image"><a href=""><img src="../static/avatars/{{ user.image }}" class="rounded"
+                                                               width="250"></a></div>
+                            <div class="ml-3 w-100">
+                                <h4 class="mb-0 mt-0" name="nickname" style="color: white;"><a
+                                        href="/profile/{{user.name}}" style="text-decoration: none;">{{user.name}}</a>
+                                </h4> <span style="color: white;">{{user.about}}</span>
+                                <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">
+                                    <div class="d-flex flex-column"><span class="articles">Posts</span> <span
+                                            class="number1">{{ gth }}</span></div>
+                                    <div class="d-flex flex-column"><span class="followers">Followers</span> <span
+                                            id="followers-count-{{user.id}}" class="number2">{{ list1|length }}</span>
+                                    </div>
+                                    <div class="d-flex flex-column"><span class="rating">Following</span> <span
+                                            class="number3">{{ ids|length }}</span></div>
+                                </div>
+                                <div class="buttons__block">
+
+                                    <button class="btn btn-sm btn-danger w-100" name="delete_user-{{user.id}}">Delete
+                                    </button>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                 </form>
+                </div>
+
+             </form>
+        </div>
+        {% endif %}
+        {% if messages %}
+        <div class="card chat-app" style="height: 85vh; background-color: #2227; border-radius: 5%;">
+            <div class="chat" style="max-height: 100%; ">
+
+                <div class="chat-history" id="chat_for_js">
+                    <ul class="m-b-0">
+                        {% for item in messages%}
+
+                        <li class="clearfix">
+                            <div class="message-data text-right">
+                                <span class=message-data-time" style="color:red;"> {{item.user.name}}</span>
+                                <span class="message-data-time" style="color: white;">{{item.created_date.strftime('%H:%M')}} {{item.created_date.strftime('%d %B %Y')}}</span>
+                                <span><button class="btn btn-sm btn-danger" name="delete_message-{{item.id}}"><i class="fa-solid fa-trash"></i></button></span>
+
+                            </div>
+                            <div class="message other-message float-right">{{item.content}}</div>
+
+                        </li>
+
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if posts %}
+    <div>
+        <ul class="timeline">
+            {% for item in posts|reverse%}
+            <li>
+                <div class="timeline-time">
+                    <span class="time" style="color: white;">{{item.created_date.strftime('%d %B %Y')}}</span>
+                    <span class="time" style="color: white;">{{item.created_date.strftime('%H:%M')}}</span>
+
+                </div>
+                <div class="timeline-icon">
+                    <a href="#"></a>
+                </div>
+                <div class="timeline-body">
+                    <div class="timeline-header">
+                        <span class="userimage"><a href="/profile/{{item.user.name}}"><img
+                                src="../static/avatars/{{item.user.image}}" alt=""></a></span>
+
+
+                        <span class="username"><a href="/profile/{{item.user.name}}">{{item.user.name}}</a></span>
+
+
+                    </div>
+
+
+                    <div class="timeline-content">
+
+                        <p style="color: red;">
+                            <img src="../static/post_image/{{item.image}}" alt="">
+                            {{item.content}}
+                        </p>
+                    </div>
+
+                    <div class="timeline-footer">
+                        <form method="post" enctype="multipart/form-data">
+                            <button class="btn btn-sm btn-danger w-100" name="delete_post-{{item.id}}">Delete</button>
+
+
+                        </form>
+                    </div>
+                </div>
+
+                <br>
+
+
+            </li>
+
+            {% endfor %}
+        </ul>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+            crossorigin="anonymous"></script>
+    {% endif %}
+    </form>
+</div>
+</div>
+{% endblock %}

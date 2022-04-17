@@ -4,6 +4,7 @@
 
 <div class="container">
 <div class="row">
+
         <div class="card chat-app" style="height: 85vh; background-color: #2227; border-radius: 5%;">
                 <div id="plist" class="people-list">
                     <div class="input-group">
@@ -35,10 +36,10 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+                                    <img src="../static/avatars/{{user.image}}" alt="avatar">
                                 </a>
                                 <div class="chat-about">
-                                    <h6 class="m-b-0" style="color: white;"></h6>
+                                    <h6 class="m-b-0" style="color: white;">{{user.name}}</h6>
 
                                 </div>
                             </div>

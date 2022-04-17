@@ -1,4 +1,3 @@
-
 .friends__block{
     margin-left: auto;
     margin-right: auto;
@@ -539,11 +538,48 @@ body {
 .chat-app .people-list {
     width: 280px;
     position: absolute;
-    left: 0;
+
     top: 0;
-    padding: 20px;
-    z-index: 7
+
 }
+.people-list1 {
+    width: 280px;
+    position: absolute;
+
+    top: 0;
+
+}
+.people-list1 .chat-list li:hover {
+    background: #323232;
+    cursor: pointer
+}
+
+.people-list1 .chat-list li.active {
+    background: #efefef
+}
+
+.people-list1 .chat-list li .name {
+    font-size: 15px
+}
+
+.people-list1 .chat-list img {
+    width: 45px;
+    border-radius: 50%
+}
+
+.people-list1 img {
+    float: left;
+    border-radius: 50%
+}
+
+
+
+
+
+
+
+
+
 
 .chat-app .chat {
     margin-left: 280px;
@@ -712,9 +748,24 @@ body {
 
 #message_input {
   position: absolute;
-  bottom: 0; /* Прилипнет к нижней рамке родителя (если у последнего будет position) */
+  bottom: 0;
   right: 0;
   width: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: black;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: 5px 5px 5px -5px rgba(34, 60, 80, 0.2) inset;
+  background-color:  #22272e;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color:  #2d333b;
+
 }
 
 .news_buttons{

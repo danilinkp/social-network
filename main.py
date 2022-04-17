@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from flask import Flask, render_template, request, session, url_for, send_from_directory, jsonify
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -56,8 +54,6 @@ def profile(name):
             followers_count = 0
         else:
             followers_count = len(followers_count)
-
-
     else:
         return redirect('/')
     if request.method == 'POST':
@@ -85,6 +81,9 @@ def profile(name):
                     path = os.path.join(f'{os.getcwd()}/static/post_image')
                     os.remove(path + '/' + posts.image)
                 if posts:
+                    user = db_sess.query(User).filter(User.id == current_user.id).first()
+                    now_count = user.post_count
+                    user.post_count = now_count - 1
                     db_sess.delete(posts)
                     db_sess.commit()
                 return redirect(f'/profile/{current_user.name}')
@@ -151,6 +150,9 @@ def profile(name):
                     raw_filename = avatars.save_avatar(image_dict[keys_image])
                 posts1 = Posts(content=request.form['about'],
                                user_id=current_user.id, image=raw_filename)
+                user = db_sess.query(User).filter(User.id == current_user.id).first()
+                now_count = user.post_count
+                user.post_count = now_count + 1
                 db_sess.add(posts1)
                 db_sess.commit()
         except Exception:
@@ -161,7 +163,8 @@ def profile(name):
                 session['raw_filename'] = raw_filename
                 return redirect(url_for('crop'))
 
-    return render_template('profile.html', posts=posts, count=number, user=user, followings_count=followings_count, followers_count=followers_count)
+    return render_template('profile.html', posts=posts, count=number, user=user, followings_count=followings_count,
+                           followers_count=followers_count)
 
 
 @app.route('/crop', methods=['GET', 'POST'])
@@ -222,10 +225,13 @@ def login():
 @app.route('/message/<user_id>', methods=['GET', 'POST'])
 @login_required
 def message_id(user_id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == user_id).first()
     if request.method == 'POST':
         message = request.form['message_user_input']
         if message:
             db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.id == user_id).first()
             chat = db_sess.query(Chats).filter((
                                                        Chats.users == f'{user_id}, {current_user.id}') | (
                                                        Chats.users == f'{current_user.id}, {user_id}')).first()
@@ -235,7 +241,7 @@ def message_id(user_id):
             )
             db_sess.add(message_user)
             db_sess.commit()
-        return redirect(f"/message/{user_id}")
+        return redirect(f"/message/{user_id}", user=user)
 
     else:
         db_sess = db_session.create_session()
@@ -258,7 +264,7 @@ def message_id(user_id):
 
         messages = db_sess.query(Message).filter(Message.chat_id == id).all()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
-    return render_template('message.html', messages=messages, friends=friends)
+    return render_template('message.html', messages=messages, friends=friends, user=user)
 
 
 @app.route('/logout')
@@ -366,11 +372,99 @@ def friends():
     if request.method == 'POST':
         data = request.form
         input_name = data['friends_search']
-        users = db_sess.query(User).filter(User.name.like(f"%{input_name}%")).filter(User.id != current_user.id).all()
+        users = db_sess.query(User).filter(User.name.like(input_name)).filter(User.id != current_user.id).all()
     else:
         users = db_sess.query(User).filter(User.id != current_user.id).all()
 
     return render_template('friends.html', title='Friends', users=users)
+
+
+@app.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin():
+    db_sess = db_session.create_session()
+    if request.method == 'POST':
+        print(request.form)
+        if 'mail_user' in list(dict(request.form).keys()):
+            pass
+    return render_template('admin.html')
+
+
+@app.route('/admin/users', methods=['GET', 'POST'])
+@login_required
+def admin_users():
+    db_sess = db_session.create_session()
+    users = db_sess.query(User).all()
+    if request.method == 'POST':
+        if 'delete_user' in list(dict(request.form).keys())[0]:
+            id = int(list(dict(request.form).keys())[0].split('-')[1])
+            user = db_sess.query(User).filter(User.id == id).first()
+            posts = db_sess.query(Posts).filter(Posts.user_id == id).all()
+            if posts:
+                for i in posts:
+                    if i.image:
+                        path = os.path.join(f'{os.getcwd()}/static/post_image')
+                        os.remove(path + '/' + i.image)
+                    if i:
+                        user = db_sess.query(User).filter(User.id == current_user.id).first()
+                        now_count = user.post_count
+                        user.post_count = now_count - 1
+                        db_sess.delete(i)
+                        db_sess.commit()
+            db_sess = db_session.create_session()
+            user_delete = db_sess.query(User).filter(User.id == id).first()
+            try:
+                if user_delete.image != 'default.jpg':
+                    path = os.path.join(f'{os.getcwd()}/static/avatars')
+                    os.remove(path + '/' + user_delete.image)
+            except Exception:
+                pass
+            db_sess.delete(user_delete)
+            db_sess.commit()
+
+            return redirect('/admin/users')
+
+    return render_template('admin.html', users=users)
+
+
+@app.route('/admin/posts', methods=['GET', 'POST'])
+@login_required
+def admin_posts():
+    db_sess = db_session.create_session()
+    posts = db_sess.query(Posts).all()
+    if request.method == 'POST':
+        if 'delete_post' in list(dict(request.form).keys())[0]:
+            id = int(list(dict(request.form).keys())[0].split('-')[1])
+            post = db_sess.query(Posts).filter(Posts.id == id).first()
+            if post.image:
+                path = os.path.join(f'{os.getcwd()}/static/post_image')
+                os.remove(path + '/' + post.image)
+            user = db_sess.query(User).filter(User.id == current_user.id).first()
+            now_count = user.post_count
+            user.post_count = now_count - 1
+
+            db_sess.delete(post)
+            db_sess.commit()
+
+            return redirect('/admin/posts')
+    return render_template('admin.html', posts=posts)
+
+
+@app.route('/admin/message', methods=['GET', 'POST'])
+@login_required
+def admin_message():
+    db_sess = db_session.create_session()
+    messages = db_sess.query(Message).all()
+    if request.method == 'POST':
+        if 'delete_message' in list(dict(request.form).keys())[0]:
+            id = int(list(dict(request.form).keys())[0].split('-')[1])
+            message = db_sess.query(Message).filter(Message.id == id).first()
+            db_sess.delete(message)
+            db_sess.commit()
+
+            return redirect('/admin/message')
+
+    return render_template('admin.html', messages=messages)
 
 
 @app.route('/news', methods=['GET', 'POST'])
@@ -459,7 +553,19 @@ def follow_user(user_id):
 def message():
     db_sess = db_session.create_session()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
-    return render_template('message.html', friends=friends)
+    return render_template('messages_friends.html', friends=friends)
+
+
+def new():
+    db_sess = db_session.create_session()
+    for i in range(200, 213):
+        user = User(
+            name=f'{i}hjkh32432jhjk',
+            email=f"32324{i}432@@@"
+        )
+        user.set_password(f'{i}233223')
+        db_sess.add(user)
+    db_sess.commit()
 
 
 @app.route('/forgot_password/', methods=['GET', 'POST'])

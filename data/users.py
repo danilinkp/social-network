@@ -19,6 +19,7 @@ class User(SqlAlchemyBase, UserMixin):
     followings = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='')
 
     followers = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='')
+    post_count = sqlalchemy.Column(sqlalchemy.Integer, nullable=True, default=0)
 
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
