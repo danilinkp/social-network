@@ -35,7 +35,7 @@
                                 <div class="d-flex flex-column"> <span class="rating">Following</span> <span class="number3">{{ user.followings|length }}</span> </div>
                             </div>
                             <div class="buttons__block">
-                                <button class="btn btn-sm btn-outline-primary w-100">Chat</button>
+                                <a type="button" class="btn btn-sm btn-outline-primary w-100">Chat</a>
 
                                 <button class="btn btn-sm btn-primary w-100 ml-2" id="follow-button-{{user.id}}" onclick="follow({{user.id}})">{% if user_id_ in list1 %} Unfollow {% else %} Follow {% endif %}</button> </div>
                             </div>
@@ -63,15 +63,16 @@
                                     <div class="d-flex flex-column"> <span class="rating">Following</span> <span class="number3">{{ user.followings|length }}</span> </div>
                                 </div>
                                     <div class="buttons__block">
-                                        <button class="btn btn-sm btn-outline-primary w-100">Chat</button>
-                                        <button class="btn btn-sm btn-primary w-100 ml-2" id="follow-button-{{user.id}}" onclick="follow({{user.id}})">{% if user_id_ in list1 %} Unfollow {% else %} Follow {% endif %}</button>
+                                       <button name="chat-{{user.id}}" class="btn btn-sm btn-outline-primary w-100">Chat</button>
+                                       <button class="btn btn-sm btn-primary w-100 ml-2" id="follow-button-{{user.id}}" onclick="follow({{user.id}})">{% if user_id_ in list1 %} Unfollow {% else %} Follow {% endif %}</button>
                                     </div>
                             </div>
                         </div>
                     </div>
-            </div>
-                    {% endif %}
+                {% endif %}
                 {% endfor %}
+            </div>
+
         {% endif %}
 {% endif %}
 {% endblock %}

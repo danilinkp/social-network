@@ -13,7 +13,7 @@
                             <img src="../static/avatars/{{user.image}}" id="photo" width="250"
                                  class="rounded mb-2 img-thumbnail" data-bs-toggle="modal"
                                  data-bs-target="#exampleModal">
-                            {% if current_user.is_authenticated and (current_user.id == id) %}
+                            {% if current_user.is_authenticated and (current_user.id == user.id) %}
                             <label data-bs-toggle="modal" data-bs-target="#exampleModal" id="uploadBtn">Choose
                                 Photo</label>
 

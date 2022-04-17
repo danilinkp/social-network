@@ -371,6 +371,7 @@ def friends():
     db_sess = db_session.create_session()
     if request.method == 'POST':
         data = request.form
+        print(data)
         input_name = data['friends_search']
         users = db_sess.query(User).filter(User.name.like(input_name)).filter(User.id != current_user.id).all()
     else:
@@ -541,16 +542,32 @@ def follow_user(user_id):
         db_sess.commit()
         return jsonify({'followers': followers_count, "followed": followed})
     else:
-        my_user.followings = str(user_id)
-        user.followers = str(current_user.id)
-        db_sess.commit()
-        return jsonify({'followers': 1, "followed": True})
+        if followings and not followers:
+            followings = followings.split(', ')
+            followings.append(str(user_id))
+            my_user.followings = ', '.join(followings)
+            user.followers = str(current_user.id)
+            db_sess.commit()
+            return jsonify({'followers': 1, "followed": True})
+
+        elif followers and not followings:
+            my_user.followings = str(user_id)
+            followers = followers.split(', ').append(str(current_user.id))
+            user.followers = ', '.join(followers)
+            db_sess.commit()
+            return jsonify({'followers': len(followers), "followed": True})
+        else:
+            my_user.followings = str(user_id)
+            user.followers = str(current_user.id)
+            db_sess.commit()
+            return jsonify({'followers': 1, "followed": True})
 
 
 @app.route('/message/', methods=['GET', 'POST'])
 @login_required
 def message():
     db_sess = db_session.create_session()
+
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
     return render_template('messages_friends.html', friends=friends)
 
