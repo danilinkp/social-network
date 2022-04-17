@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from flask import Flask, render_template, request, session, url_for, send_from_directory, jsonify
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -11,6 +13,7 @@ from forms.loginform import LoginForm
 from forms.user import RegisterForm
 from flask_avatars import Avatars
 import os
+import requests
 import random
 
 app = Flask(__name__)
@@ -363,7 +366,7 @@ def friends():
     if request.method == 'POST':
         data = request.form
         input_name = data['friends_search']
-        users = db_sess.query(User).filter(User.name.like(input_name)).filter(User.id != current_user.id).all()
+        users = db_sess.query(User).filter(User.name.like(f"%{input_name}%")).filter(User.id != current_user.id).all()
     else:
         users = db_sess.query(User).filter(User.id != current_user.id).all()
 
@@ -378,6 +381,7 @@ def news():
         data = request.form
         if 'all' in list(dict(data).keys()):
             posts = db_sess.query(Posts).filter(Posts.user_id != current_user.id).all()
+            posts_api = []
         elif 'friends' in list(dict(data).keys()):
             friends = current_user.followings.split(', ')
             if friends[0] != '':
@@ -385,6 +389,13 @@ def news():
                 posts = db_sess.query(Posts).filter(Posts.user_id.in_(friends_id)).all()
             else:
                 posts = []
+            posts_api = []
+        elif 'api' in list(dict(data).keys()):
+            url = ('https://newsapi.org/v2/top-headlines?country=ru&apiKey=fc730c64a9104752b13f184a6d630a83')
+
+            response = requests.get(url)
+            posts_api = response.json()['articles']
+            posts = []
     else:
         friends = current_user.followings.split(', ')
         if friends:
@@ -392,7 +403,8 @@ def news():
             posts = db_sess.query(Posts).filter(Posts.user_id.in_(friends_id)).all()
         else:
             posts = db_sess.query(Posts).filter(Posts.user_id != current_user.id).all()
-    return render_template('news.html', title='Friends', posts=posts)
+        posts_api = []
+    return render_template('news.html', title='News', posts=posts, posts_api=posts_api)
 
 
 @app.route('/follow_user/<user_id>', methods=['GET', 'POST'])
