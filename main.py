@@ -54,8 +54,6 @@ def profile(name):
             followers_count = 0
         else:
             followers_count = len(followers_count)
-
-
     else:
         return redirect('/')
     if request.method == 'POST':
@@ -83,6 +81,9 @@ def profile(name):
                     path = os.path.join(f'{os.getcwd()}/static/post_image')
                     os.remove(path + '/' + posts.image)
                 if posts:
+                    user = db_sess.query(User).filter(User.id == current_user.id).first()
+                    now_count = user.post_count
+                    user.post_count = now_count - 1
                     db_sess.delete(posts)
                     db_sess.commit()
                 return redirect(f'/profile/{current_user.name}')
@@ -149,6 +150,9 @@ def profile(name):
                     raw_filename = avatars.save_avatar(image_dict[keys_image])
                 posts1 = Posts(content=request.form['about'],
                                user_id=current_user.id, image=raw_filename)
+                user = db_sess.query(User).filter(User.id == current_user.id).first()
+                now_count = user.post_count
+                user.post_count = now_count + 1
                 db_sess.add(posts1)
                 db_sess.commit()
         except Exception:
@@ -411,6 +415,9 @@ def admin_users():
                         path = os.path.join(f'{os.getcwd()}/static/post_image')
                         os.remove(path + '/' + i.image)
                     if i:
+                        user = db_sess.query(User).filter(User.id == current_user.id).first()
+                        now_count = user.post_count
+                        user.post_count = now_count - 1
                         db_sess.delete(i)
                         db_sess.commit()
             db_sess = db_session.create_session()
@@ -442,6 +449,9 @@ def admin_posts():
             if post.image:
                 path = os.path.join(f'{os.getcwd()}/static/post_image')
                 os.remove(path + '/' + post.image)
+            user = db_sess.query(User).filter(User.id == current_user.id).first()
+            now_count = user.post_count
+            user.post_count = now_count - 1
 
 
             db_sess.delete(post)
