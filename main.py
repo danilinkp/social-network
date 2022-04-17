@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, session, url_for, send_from_directory, jsonify
+from sqlalchemy import orm
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
@@ -387,6 +388,10 @@ def new():
 @login_required
 def admin():
     db_sess = db_session.create_session()
+    if request.method == 'POST':
+        print(request.form)
+        if 'mail_user' in list(dict(request.form).keys()):
+            pass
     return render_template('admin.html')
 
 
@@ -395,6 +400,32 @@ def admin():
 def admin_users():
     db_sess = db_session.create_session()
     users = db_sess.query(User).all()
+    if request.method == 'POST':
+        if 'delete_user' in list(dict(request.form).keys())[0]:
+            id = int(list(dict(request.form).keys())[0].split('-')[1])
+            user = db_sess.query(User).filter(User.id == id).first()
+            posts = db_sess.query(Posts).filter(Posts.user_id == id).all()
+            if posts:
+                for i in posts:
+                    if i.image:
+                        path = os.path.join(f'{os.getcwd()}/static/post_image')
+                        os.remove(path + '/' + i.image)
+                    if i:
+                        db_sess.delete(i)
+                        db_sess.commit()
+            db_sess = db_session.create_session()
+            user_delete = db_sess.query(User).filter(User.id == id).first()
+            try:
+                if user_delete.image != 'default.jpg':
+                    path = os.path.join(f'{os.getcwd()}/static/avatars')
+                    os.remove(path + '/' + user_delete.image)
+            except Exception:
+                pass
+            db_sess.delete(user_delete)
+            db_sess.commit()
+
+            return redirect('/admin/users')
+
 
     return render_template('admin.html', users=users)
 
@@ -404,7 +435,19 @@ def admin_users():
 def admin_posts():
     db_sess = db_session.create_session()
     posts = db_sess.query(Posts).all()
+    if request.method == 'POST':
+        if 'delete_post' in list(dict(request.form).keys())[0]:
+            id = int(list(dict(request.form).keys())[0].split('-')[1])
+            post = db_sess.query(Posts).filter(Posts.id == id).first()
+            if post.image:
+                path = os.path.join(f'{os.getcwd()}/static/post_image')
+                os.remove(path + '/' + post.image)
 
+
+            db_sess.delete(post)
+            db_sess.commit()
+
+            return redirect('/admin/posts')
     return render_template('admin.html', posts=posts)
 
 
@@ -413,6 +456,14 @@ def admin_posts():
 def admin_message():
     db_sess = db_session.create_session()
     messages = db_sess.query(Message).all()
+    if request.method == 'POST':
+        if 'delete_message' in list(dict(request.form).keys())[0]:
+            id = int(list(dict(request.form).keys())[0].split('-')[1])
+            message = db_sess.query(Message).filter(Message.id == id).first()
+            db_sess.delete(message)
+            db_sess.commit()
+
+            return redirect('/admin/message')
 
     return render_template('admin.html', messages=messages)
 

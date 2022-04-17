@@ -701,7 +701,8 @@ body {
 
 #message_input {
   position: absolute;
-  bottom: 0; /* Прилипнет к нижней рамке родителя (если у последнего будет position) */
+  bottom: 0;
   right: 0;
   width: 100%;
 }
+
