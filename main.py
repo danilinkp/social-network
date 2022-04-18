@@ -27,6 +27,7 @@ avatars = Avatars(app)
 
 @app.route('/avatars/<path:filename>')
 def get_avatar(filename):
+    """ Получение аватара """
     app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
     return send_from_directory(app.config['AVATARS_SAVE_PATH'], filename)
 
@@ -34,12 +35,14 @@ def get_avatar(filename):
 @app.route('/')
 @app.route('/index')
 def index():
+    """ Страница по умолчанию """
     return render_template("index.html")
 
 
 @app.route('/profile/<string:name>', methods=['GET', 'POST'])
 @login_required
 def profile(name):
+    """ Профиль пользователя """
     db_sess = db_session.create_session()
     if current_user.is_authenticated:
         user = db_sess.query(User).filter(User.name == name).first()
@@ -73,7 +76,9 @@ def profile(name):
             pass
 
         try:
-            if 'delete_agree' in keys:
+
+            if 'delete_agree' in keys:  # Удаление постов
+
                 id2 = keys.split('-')[-1]
                 db_sess = db_session.create_session()
                 posts = db_sess.query(Posts).filter((Posts.id == id2),
@@ -92,7 +97,7 @@ def profile(name):
             pass
 
         try:
-            if 'about_user' in data or 'git_hub' in data or 'mail_user' in data:
+            if 'about_user' in data or 'git_hub' in data or 'mail_user' in data:  # Настройка профиля
                 db_sess = db_session.create_session()
 
                 user = db_sess.query(User).filter(User.id == current_user.id).first()
@@ -110,7 +115,8 @@ def profile(name):
         try:
 
             if (keys != 'about' and 'about' in keys) or (
-                    not str(request.files[keys_image]).split()[1] == "''" and 'file-' in keys_image):
+                    not str(request.files[keys_image]).split()[
+                            1] == "''" and 'file-' in keys_image):  # Реализация постов
                 about = data[keys]
                 id = keys.split('-')[1]
                 db_sess = db_session.create_session()
@@ -157,7 +163,8 @@ def profile(name):
                 db_sess.add(posts1)
                 db_sess.commit()
         except Exception:
-            if not str(request.files['file3']).split()[1] == "''":
+            if not str(request.files['file3']).split()[
+                       1] == "''":  # Реализвация загрузки фотогорафии на профиль пользователя
                 f = request.files.get('file3')
                 app.config['AVATARS_SAVE_PATH'] = os.path.join(f'{os.getcwd()}/static/avatars')
                 raw_filename = avatars.save_avatar(f)
@@ -171,6 +178,7 @@ def profile(name):
 @app.route('/crop', methods=['GET', 'POST'])
 @login_required
 def crop():
+    """ Вырезка изображения """
     if request.method == 'POST':
         x = request.form.get('x')
         y = request.form.get('y')
@@ -210,6 +218,7 @@ def load_user(user_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """ Вход пользователя """
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -226,6 +235,7 @@ def login():
 @app.route('/message/<user_id>', methods=['GET', 'POST'])
 @login_required
 def message_id(user_id):
+    """ Реализация сообщений """
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == user_id).first()
     if request.method == 'POST':
@@ -271,12 +281,14 @@ def message_id(user_id):
 @app.route('/logout')
 @login_required
 def logout():
+    """ Выход пользователя """
     logout_user()
     return redirect("/")
 
 
 @app.route('/register_email', methods=['GET', 'POST'])
 def reqister_email():
+    """ Регистрация почты """
     if request.method == 'POST':
         if request.form['mail_user'] != '':
             email = request.form['mail_user']
@@ -286,6 +298,7 @@ def reqister_email():
 
 @app.route('/confirm_email/<email>', methods=['GET', 'POST'])
 def confirm_email(email):
+    """ Подтверждение почты """
     if request.method == 'POST':
         if "back" in list(dict(request.form).keys()):
             return redirect('/register_email')
@@ -309,6 +322,7 @@ def confirm_email(email):
 
 @app.route('/register/<email>', methods=['GET', 'POST'])
 def reqister(email):
+    """ Регистрация после подтверждения почты """
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -342,6 +356,7 @@ def reqister(email):
 @app.route('/like_post/<post_id>', methods=['POST'])
 @login_required
 def like(post_id):
+    """ Реализация лайков """
     db_sess = db_session.create_session()
     post = db_sess.query(Posts).filter((Posts.id == post_id)).first()
     members = post.likes
@@ -369,6 +384,7 @@ def like(post_id):
 @app.route('/friends', methods=['GET', 'POST'])
 @login_required
 def friends():
+    """ Реализация друзей """
     db_sess = db_session.create_session()
     if request.method == 'POST':
         data = request.form
@@ -391,6 +407,7 @@ def friends():
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
+    """ Реализация админки """
     db_sess = db_session.create_session()
     if request.method == 'POST':
         if 'mail_user' in list(dict(request.form).keys()):
@@ -401,6 +418,7 @@ def admin():
 @app.route('/admin/users', methods=['GET', 'POST'])
 @login_required
 def admin_users():
+    """ Реализация админки. Окно со всеми пользователями """
     db_sess = db_session.create_session()
     users = db_sess.query(User).all()
     if request.method == 'POST':
@@ -442,6 +460,7 @@ def admin_users():
 @app.route('/admin/posts', methods=['GET', 'POST'])
 @login_required
 def admin_posts():
+    """ Реализация админки. Окно со всеми постами """
     db_sess = db_session.create_session()
     posts = db_sess.query(Posts).all()
     if request.method == 'POST':
@@ -465,6 +484,7 @@ def admin_posts():
 @app.route('/admin/message', methods=['GET', 'POST'])
 @login_required
 def admin_message():
+    """ Реализация админки. Окно со всеми сообщениями """
     db_sess = db_session.create_session()
     messages = db_sess.query(Message).all()
     if request.method == 'POST':
@@ -482,13 +502,13 @@ def admin_message():
 @app.route('/admin/admins', methods=['GET', 'POST'])
 @login_required
 def admin_list():
+    """ Реализация админки. Окно со всеми админами """
     db_sess = db_session.create_session()
     admin_user = db_sess.query(Admin).filter(Admin.user_id == current_user.id).first()
     if admin_user:
         pos = admin_user
     else:
         pos = ''
-    print(pos.position)
     admins = db_sess.query(Admin).all()
     if request.method == 'POST':
         if 'delete_user' in list(dict(request.form).keys())[0]:
@@ -513,7 +533,8 @@ def admin_list():
                 db_sess.commit()
                 return redirect('/admin/admins')
             else:
-                return render_template('admin.html', id_for_edit=id, edit_user='not is none', message='Wrong position', pos=pos)
+                return render_template('admin.html', id_for_edit=id, edit_user='not is none', message='Wrong position',
+                                       pos=pos)
         if 'new_admin' in list(dict(request.form).keys())[0]:
             return render_template('admin.html', new_admin='not is none', pos=pos)
         if 'user_name' in list(dict(request.form).keys())[0]:
@@ -526,7 +547,8 @@ def admin_list():
             admin_new1 = db_sess.query(Admin).filter(Admin.user_id == admin_new.id).first()
 
             if admin_new1:
-                return render_template('admin.html', new_admin='not is none', message='The user is already an admin', pos=pos)
+                return render_template('admin.html', new_admin='not is none', message='The user is already an admin',
+                                       pos=pos)
             if request.form['user_position'] != 'common' and request.form['user_position'] != 'general':
                 return render_template('admin.html', new_admin='not is none', message='Wrong position', pos=pos)
             admin_new2 = db_sess.query(User).filter(User.id == id).first()
@@ -544,6 +566,7 @@ def admin_list():
 @app.route('/news', methods=['GET', 'POST'])
 @login_required
 def news():
+    """ Реализация новостей """
     db_sess = db_session.create_session()
     if request.method == 'POST':
         data = request.form
@@ -578,6 +601,7 @@ def news():
 @app.route('/follow_user/<user_id>', methods=['GET', 'POST'])
 @login_required
 def follow_user(user_id):
+    """ Реализация подписки """
     db_sess = db_session.create_session()
     my_user = db_sess.query(User).filter(User.id == current_user.id).first()
     user = db_sess.query(User).filter(User.id == user_id).first()
@@ -640,13 +664,14 @@ def follow_user(user_id):
 @app.route('/message/', methods=['GET', 'POST'])
 @login_required
 def message():
-
+    """ Реализация сообщений """
     db_sess = db_session.create_session()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
     return render_template('messages_friends.html', friends=friends)
 
 
 def new():
+    """ Реализация ботов """
     db_sess = db_session.create_session()
     for i in range(200, 213):
         user = User(
@@ -660,6 +685,7 @@ def new():
 
 @app.route('/forgot_password/', methods=['GET', 'POST'])
 def forgot_password():
+    """ Если пользователь забыл пароль """
     if request.method == 'POST':
         if 'mail_user' in list(dict(request.form).keys()):
             if dict(request.form)['mail_user'] != '':
@@ -677,6 +703,7 @@ def forgot_password():
 
 @app.route('/confirm_forgot_password/<user_email>', methods=['GET', 'POST'])
 def confirm_forgot_password(user_email):
+    """ Подтверждение пароля для смены пароля """
     if request.method == 'POST':
         if "back" in list(dict(request.form).keys()):
             return redirect('/login')
@@ -700,6 +727,7 @@ def confirm_forgot_password(user_email):
 
 @app.route('/new_password_forgot_password/<user_email>', methods=['GET', 'POST'])
 def new_password_forgot_password(user_email):
+    """ Новый пароль """
     if request.method == 'POST':
         if request.form['new_password'] == request.form['repeat_password']:
             db_sess = db_session.create_session()
@@ -716,6 +744,7 @@ def new_password_forgot_password(user_email):
 @app.route('/settings/', methods=['GET', 'POST'])
 @login_required
 def settings():
+    """ Настройки """
     if request.method == 'POST':
         if 'change_password' in list(dict(request.form).keys()):
             data = request.form
@@ -739,6 +768,7 @@ def settings():
 @app.route('/delete_account/', methods=['GET', 'POST'])
 @login_required
 def delete_account():
+    """ Удаление аккаунта """
     if request.method == 'POST':
         if 'delete_button' in list(dict(request.form).keys()):
             data = request.form
@@ -779,6 +809,8 @@ def delete_account():
 
 
 def main():
+
+    """ Запуск сервера"""
     app.run(port=8080, host='127.0.0.1')
 
 
