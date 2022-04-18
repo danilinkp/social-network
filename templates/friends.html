@@ -59,8 +59,8 @@
                                 <h4 class="mb-0 mt-0" style="color: white;"><a href="/profile/{{user.name}}" style="text-decoration: none;">{{user.name}}</a></h4> <span style="color: white;">{{ user.about }}</span>
                                 <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">
                                     <div class="d-flex flex-column"> <span class="articles">Posts</span> <span class="number1">{{ user.post_count }}</span> </div>
-                                    <div class="d-flex flex-column"> <span class="followers">Followers</span> <span id="followers-count-{{user.id}}" class="number2">{{ user.followers|length }}</span> </div>
-                                    <div class="d-flex flex-column"> <span class="rating">Following</span> <span class="number3">{{ user.followings|length }}</span> </div>
+                                    <div class="d-flex flex-column"> <span class="followers">Followers</span> <span id="followers-count-{{user.id}}" class="number2">{% if user.followers %} {{list1|length}} {% else %} 0 {% endif %}</span> </div>
+                                    <div class="d-flex flex-column"> <span class="rating">Following</span> <span class="number3">{% if user.followings %} {{ids|length}} {% else %} 0 {% endif %}</span> </div>
                                 </div>
                                     <div class="buttons__block">
                                        <button name="chat-{{user.id}}" class="btn btn-sm btn-outline-primary w-100">Chat</button>

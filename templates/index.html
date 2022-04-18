@@ -1,50 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<h1></h1>
-{% if current_user.is_authenticated %}
-<div class="container">
-  <div class="row">
-    <div class="col-sm-3">
-      <div class="profile-pic-div mr-3">
-        <form method="post" enctype="multipart/form-data">
-          <img src="../static/avatars/person.png" id="photo" width="250" class="rounded mb-2 img-thumbnail">
-          <label data-bs-toggle="modal" data-bs-target="#exampleModal" id="uploadBtn">Choose Photo</label>
-          <script src="../static/js/app.js"></script>
-        </form>
-      </div>
-      <form method="post" enctype="multipart/form-data">
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog ">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Uploading a new photo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-              </div>
-              <div class="modal-body bg-dark">
-                <div class="container-fluid">
-                  <div class="row">
-                    <div class="input__wrapper col-md-8">
-                       <input type="file" name="file" id="input__file" class="input input__file" multiple>
-                       <label for="input__file" class="input__file-button bg-light">
-                          <span class="input__file-icon-wrapper"><img class="input__file-icon" src="../static/download.png" alt="Выбрать файл" width="25"></span>
-                          <span class="input__file-button-text">Select a file</span>
-                       </label>
-                    </div>
-                    <button type="submit" class="btn btn-success btn-circle col-md-3"><i class="fa-solid fa-chevron-right"></i></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"crossorigin="anonymous"></script>
+
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="../static/carousel/first.jpg" class="d-block w-100" alt="...">
     </div>
-
-
+    <div class="carousel-item">
+      <img src="../static/carousel/second.jpg" class="d-block w-100" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="../static/carousel/third.jpg" class="d-block w-100" alt="...">
+    </div>
   </div>
-  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
 </div>
 
-{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 {% endblock %}

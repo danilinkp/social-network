@@ -4,13 +4,92 @@
 
 <div class="container">
     <div>
-        <a href="/admin/users" class="btn btn-danger" style="width: 33%;">Users</a>
-        <a href="/admin/posts" class="btn btn-danger" style="width: 33%;">Posts</a>
-        <a href="/admin/message" class="btn btn-danger" style="width: 33%;">Messages</a>
+        <a href="/admin/users" class="btn btn-danger" style="width: 24%;">Users</a>
+        <a href="/admin/posts" class="btn btn-danger" style="width: 25%;">Posts</a>
+        <a href="/admin/message" class="btn btn-danger" style="width: 25%;">Messages</a>
+        <a href="/admin/admins" class="btn btn-danger" style="width: 24%;">Admins</a>
     </div>
 
     <div class="row"
          style="height: 85vh; background-color: #2227; border-radius: 5%; padding-left: auto; padding-right: auto; overflow: auto;">
+        {% if new_admin %}
+            <div id="logreg-forms">
+                <div class="form-signin">
+                     <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">New admin</h1>
+                    <form method="post" enctype="multipart/form-data">
+                        <input class="form-control" placeholder="User name" name="user_name" required>
+                        <input class="form-control" placeholder="Position" name="user_position" required>
+                        <br>
+
+
+                         <button type="submit" class="btn btn-primary" style="width: 100%;" name="new_admin_submit"><i
+                                                        class="fa-solid fa-chevron-right"></i></button>
+                    </form>
+                    <div style="color: red;">{{message}}</div>
+                </div>
+            </div>
+        {% endif %}
+        {% if admins %}
+        {% if pos == general_pos %}
+
+                {% endif %}
+        <div style="color: white; align-items: center;">
+            <br>
+            <span>
+                  <form action="" class="friends__block" method="post">
+                         <button name='new_admin' class="btn btn-sm btn-danger" style="margin-left: auto;
+                            width: 40%;
+                            margin-right: auto;
+                            display: flex;
+                            justify-content: center;
+                            flex-wrap: wrap;">
+                             New admin</button>
+                  </form>
+                    </span>
+
+            <form action="" class="friends__block" method="post">
+
+
+
+
+                {% for admin in admins %}
+                {% set list1 = admin.user.followers.split(', ') %}
+                {% set list2 = admin.user.followings.split(', ') %}
+                {% set user_id_ = current_user.id | string() %}
+                <div class="card_friend p-3"
+                     style="background-color: #2d333b; border: 1px solid white; border-radius: 10px;">
+                    <div class="object__block">
+                        <div class="image"><a href=""><img src="../static/avatars/{{ admin.user.image }}" class="rounded"
+                                                           width="250"></a></div>
+                        <div class="ml-3 w-100">
+                            <h4 class="mb-0 mt-0" name="nickname" style="color: white;"><a
+                                    href="/profile/{{admin.user.name}}" style="text-decoration: none;">{{admin.user.name}}</a>
+                            </h4> <span style="color: white;">{{admin.user.about}}</span>
+                            <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">
+                                <div class="d-flex flex-column"><span class="articles">Position</span> <span
+                                        class="number1">{{ admin.position}}</span></div>
+                            </div>
+                            <div class="buttons__block">
+                                {% if admin.position == 'general' %}
+
+
+                                <button class="btn btn-sm btn-danger w-100" name="delete_user-{{admin.user.id}}">Delete
+                                </button>
+                                <button class="btn btn-sm btn-danger w-100" name="delete_user-{{admin.user.id}}">Edit position
+                                </button>
+                                {% endif %}
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </form>
+        </div>
+
+        {% endif %}
         {% if users %}
         <div style="color: white; align-items: center;">
 
@@ -33,10 +112,10 @@
                                 <div class="d-flex flex-column"><span class="articles">Posts</span> <span
                                         class="number1">{{ user.post_count }}</span></div>
                                 <div class="d-flex flex-column"><span class="followers">Followers</span> <span
-                                        id="followers-count-{{user.id}}" class="number2">{{ list1|length }}</span>
+                                        id="followers-count-{{user.id}}" class="number2">{% if user.followers %} {{list1|length}} {% else %} 0 {% endif %}</span>
                                 </div>
                                 <div class="d-flex flex-column"><span class="rating">Following</span> <span
-                                        class="number3">{{ ids|length }}</span></div>
+                                        class="number3">{% if user.followings %} {{ids|length}} {% else %} 0 {% endif %}</span></div>
                             </div>
                             <div class="buttons__block">
 
@@ -141,6 +220,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
                 crossorigin="anonymous"></script>
         {% endif %}
+
         </form>
     </div>
 

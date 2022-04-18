@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session, url_for, send_from_d
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
+from data.admins import Admin
 from data.chat import Chats
 from data.messages import Message
 from data.posts import Posts
@@ -33,7 +34,7 @@ def get_avatar(filename):
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template("base.html")
+    return render_template("index.html")
 
 
 @app.route('/profile/<string:name>', methods=['GET', 'POST'])
@@ -326,7 +327,6 @@ def reqister(email):
                                    form=form,
                                    email=email,
                                    message="Пользователь с таким именем уже есть")
-
         user = User(
             name=form.name.data,
             email=email
@@ -465,6 +465,42 @@ def admin_message():
             return redirect('/admin/message')
 
     return render_template('admin.html', messages=messages)
+
+
+@app.route('/admin/admins', methods=['GET', 'POST'])
+@login_required
+def admin_list():
+    db_sess = db_session.create_session()
+    if current_user.admin:
+        pos = current_user.admin[0].position
+    else:
+        pos = ''
+    admins = db_sess.query(Admin).all()
+    if request.method == 'POST':
+        if 'new_admin' in list(dict(request.form).keys())[0]:
+            return render_template('admin.html', new_admin='not is none')
+        if 'user_name' in list(dict(request.form).keys())[0]:
+            db_sess = db_session.create_session()
+            admin_new = db_sess.query(User).filter(User.name == request.form['user_name']).first()
+
+            if not admin_new:
+                return render_template('admin.html', new_admin='not is none', message='not user')
+            id = admin_new.id
+            admin_new1 = db_sess.query(Admin).filter(Admin.user_id == admin_new.id).first()
+
+            if admin_new1:
+                return render_template('admin.html', new_admin='not is none', message='Уже есть')
+            if request.form['user_position'] != 'common' and  request.form['user_position'] != 'general':
+                return render_template('admin.html', new_admin='not is none', message='bad position')
+
+            user = Admin(
+                user_id=id,
+                position=request.form['user_position'])
+            db_sess.add(user)
+            db_sess.commit()
+            return redirect('/admin/admins')
+
+    return render_template('admin.html', admins=admins, general_pos='general', pos=pos)
 
 
 @app.route('/news', methods=['GET', 'POST'])
