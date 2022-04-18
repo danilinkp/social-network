@@ -538,23 +538,25 @@ body {
 .chat-app .people-list {
     width: 280px;
     position: absolute;
-
     top: 0;
-
 }
+
 .people-list1 {
     width: 280px;
     position: absolute;
-
     top: 0;
+
+.people-list1 .chat-list > div{
+    margin: 5px;
+}
 
 }
 .people-list1 .chat-list li:hover {
-    background: #323232;
+    background: #222;
     cursor: pointer
 }
 
-.people-list1 .chat-list li.active {
+.people-list1 .chat-list li:active {
     background: #efefef
 }
 
@@ -572,15 +574,6 @@ body {
     border-radius: 50%
 }
 
-
-
-
-
-
-
-
-
-
 .chat-app .chat {
     margin-left: 280px;
     border-left: 1px solid #eaeaea;
@@ -588,12 +581,8 @@ body {
 
 }
 
-
-
-
-
 .people-list .chat-list li:hover {
-    background: #323232;
+    background: #264d73;
     cursor: pointer
 }
 
@@ -615,9 +604,15 @@ body {
     border-radius: 50%
 }
 
-
-
-
+.choose__text{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 35vh;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .chat .chat-header {
     padding: 15px 20px;
@@ -644,7 +639,14 @@ body {
     padding: 0
 }
 
+.chat .chat-history ul li {
+    list-style: none;
+    margin-bottom: 30px
+}
 
+.chat .chat-history ul li:last-child {
+    margin-bottom: 0px
+}
 
 .chat .chat-history .message-data {
     margin-bottom: 15px
@@ -671,12 +673,23 @@ body {
 }
 
 
-
 .chat .chat-history .my-message {
     background: #efefef
 }
 
-
+.chat .chat-history .my-message:after {
+    bottom: 100%;
+    left: 30px;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-bottom-color: #efefef;
+    border-width: 10px;
+    margin-left: -10px
+}
 
 .chat .chat-history .other-message {
     background: #e8f1f3;
@@ -700,10 +713,6 @@ body {
 
 .float-right {
     float: right
-}
-
-.list-unstyled:hover{
-    background-color: #323232
 }
 
 .clearfix:after {

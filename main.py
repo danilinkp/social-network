@@ -227,7 +227,7 @@ def login():
 @login_required
 def message_id(user_id):
     db_sess = db_session.create_session()
-    user1 = db_sess.query(User).filter(User.id == user_id).first()
+    user = db_sess.query(User).filter(User.id == user_id).first()
     if request.method == 'POST':
         message = request.form['message_user_input']
         if message:
@@ -265,7 +265,7 @@ def message_id(user_id):
 
         messages = db_sess.query(Message).filter(Message.chat_id == id).all()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
-    return render_template('message.html', messages=messages, friends=friends, user=user1)
+    return render_template('message.html', messages=messages, friends=friends, user=user)
 
 
 @app.route('/logout')
@@ -327,6 +327,7 @@ def reqister(email):
                                    form=form,
                                    email=email,
                                    message="Пользователь с таким именем уже есть")
+
         user = User(
             name=form.name.data,
             email=email
@@ -385,8 +386,6 @@ def friends():
     else:
         users = db_sess.query(User).filter(User.id != current_user.id).all()
         return render_template('friends.html', title='Friends', users=users)
-
-
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -641,16 +640,14 @@ def follow_user(user_id):
 @app.route('/message/', methods=['GET', 'POST'])
 @login_required
 def message():
-    new()
     db_sess = db_session.create_session()
-
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
     return render_template('messages_friends.html', friends=friends)
 
 
 def new():
     db_sess = db_session.create_session()
-    for i in range(200, 300):
+    for i in range(200, 213):
         user = User(
             name=f'{i}hjkh32432jhjk',
             email=f"32324{i}432@@@"
@@ -781,7 +778,7 @@ def delete_account():
 
 
 def main():
-    app.run(port=8082, host='127.0.0.1')
+    app.run(port=8080, host='127.0.0.1')
 
 
 if __name__ == '__main__':
