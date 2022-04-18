@@ -21,10 +21,11 @@ class User(SqlAlchemyBase, UserMixin):
 
     followers = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='')
     post_count = sqlalchemy.Column(sqlalchemy.Integer, nullable=True, default=0)
+    admin_check = sqlalchemy.Column(sqlalchemy.Integer, default=0)
 
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
-    admin = orm.relation('Admin')
+
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

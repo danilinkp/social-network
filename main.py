@@ -371,13 +371,22 @@ def friends():
     db_sess = db_session.create_session()
     if request.method == 'POST':
         data = request.form
-        print(data)
-        input_name = data['friends_search']
-        users = db_sess.query(User).filter(User.name.like(input_name)).filter(User.id != current_user.id).all()
+        if 'my_friends' in list(dict(request.form).keys())[0]:
+            users = db_sess.query(User).filter(User.id != current_user.id).all()
+            return render_template('friends.html', title='Friends', users=users, friend_check='not is none')
+        elif 'all_users' in list(dict(request.form).keys())[0]:
+            users = db_sess.query(User).filter(User.id != current_user.id).all()
+            return render_template('friends.html', title='Friends', users=users, all_users_check='not is none')
+        elif 'friends_search' in list(dict(request.form).keys())[0]:
+            input_name = data['friends_search']
+            users = db_sess.query(User).filter(User.name.like(f"%{input_name}%")).filter(
+                User.id != current_user.id).all()
+            return render_template('friends.html', title='Friends', users=users)
     else:
         users = db_sess.query(User).filter(User.id != current_user.id).all()
+        return render_template('friends.html', title='Friends', users=users)
 
-    return render_template('friends.html', title='Friends', users=users)
+
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -419,6 +428,10 @@ def admin_users():
                     os.remove(path + '/' + user_delete.image)
             except Exception:
                 pass
+
+            if int(user_delete.admin_check) == 1:
+                admin_delete = db_sess.query(Admin).filter(Admin.user_id == id).first()
+                db_sess.delete(admin_delete)
             db_sess.delete(user_delete)
             db_sess.commit()
 
@@ -471,28 +484,54 @@ def admin_message():
 @login_required
 def admin_list():
     db_sess = db_session.create_session()
-    if current_user.admin:
-        pos = current_user.admin[0].position
+    admin_user = db_sess.query(Admin).filter(Admin.user_id == current_user.id).first()
+    if admin_user:
+        pos = admin_user
     else:
         pos = ''
+    print(pos.position)
     admins = db_sess.query(Admin).all()
     if request.method == 'POST':
+        if 'delete_user' in list(dict(request.form).keys())[0]:
+            id = list(dict(request.form).keys())[0].split('-')[1]
+            db_sess = db_session.create_session()
+            admin_delete = db_sess.query(Admin).filter(Admin.user_id == id).first()
+            admin_delete_1 = db_sess.query(User).filter(User.id == id).first()
+            admin_delete_1.admin_check = 0
+            db_sess.delete(admin_delete)
+            db_sess.commit()
+            return redirect('/admin/admins')
+        if 'edit_user' in list(dict(request.form).keys())[0]:
+            id = list(dict(request.form).keys())[0].split('-')[1]
+            return render_template('admin.html', id_for_edit=id, edit_user='not is none', pos=pos)
+        if 'user_position_edit' in list(dict(request.form).keys())[0]:
+            id = list(dict(request.form).keys())[0].split('-')[1]
+            new_user_position = dict(request.form)[f'user_position_edit-{id}']
+            if new_user_position == 'common' or new_user_position == 'general':
+                db_sess = db_session.create_session()
+                admin_edit = db_sess.query(Admin).filter(Admin.user_id == id).first()
+                admin_edit.position = new_user_position
+                db_sess.commit()
+                return redirect('/admin/admins')
+            else:
+                return render_template('admin.html', id_for_edit=id, edit_user='not is none', message='Error position', pos=pos)
         if 'new_admin' in list(dict(request.form).keys())[0]:
-            return render_template('admin.html', new_admin='not is none')
+            return render_template('admin.html', new_admin='not is none', pos=pos)
         if 'user_name' in list(dict(request.form).keys())[0]:
             db_sess = db_session.create_session()
             admin_new = db_sess.query(User).filter(User.name == request.form['user_name']).first()
 
             if not admin_new:
-                return render_template('admin.html', new_admin='not is none', message='not user')
+                return render_template('admin.html', new_admin='not is none', message='not user', pos=pos)
             id = admin_new.id
             admin_new1 = db_sess.query(Admin).filter(Admin.user_id == admin_new.id).first()
 
             if admin_new1:
-                return render_template('admin.html', new_admin='not is none', message='Уже есть')
-            if request.form['user_position'] != 'common' and  request.form['user_position'] != 'general':
-                return render_template('admin.html', new_admin='not is none', message='bad position')
-
+                return render_template('admin.html', new_admin='not is none', message='Уже есть', pos=pos)
+            if request.form['user_position'] != 'common' and request.form['user_position'] != 'general':
+                return render_template('admin.html', new_admin='not is none', message='bad position', pos=pos)
+            admin_new2 = db_sess.query(User).filter(User.id == id).first()
+            admin_new2.admin_check = 1
             user = Admin(
                 user_id=id,
                 position=request.form['user_position'])
@@ -602,6 +641,7 @@ def follow_user(user_id):
 @app.route('/message/', methods=['GET', 'POST'])
 @login_required
 def message():
+    new()
     db_sess = db_session.create_session()
 
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
@@ -610,7 +650,7 @@ def message():
 
 def new():
     db_sess = db_session.create_session()
-    for i in range(200, 213):
+    for i in range(200, 300):
         user = User(
             name=f'{i}hjkh32432jhjk',
             email=f"32324{i}432@@@"
@@ -727,6 +767,9 @@ def delete_account():
                         os.remove(path + '/' + user_delete.image)
                 except Exception:
                     pass
+                if int(user_delete.admin_check) == 1:
+                    admin_delete = db_sess.query(Admin).filter(Admin.user_id == user_delete.id).first()
+                    db_sess.delete(admin_delete)
                 db_sess.delete(user_delete)
                 db_sess.commit()
 
