@@ -5,25 +5,20 @@
 <div class="container">
     <div class="row">
 
-        <div class="card chat-app" style="height: 85vh; background-color: #2227; border-radius: 5%;">
+        <div class="card chat-app" style="height: 85vh; background-color: #2227;">
             <div id="plist" class="people-list" style="overflow: auto; max-height: 100%;">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span style="height: 40px;" class="input-group-text"><i class="fa fa-search"></i></span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Search...">
-                </div>
-                <ul class="list-unstyled chat-list mt-2 mb-0">
+
+                <ul class="list-unstyled chat-list mt-2 mb-0" style="">
                     {% for user in friends%}
                     {% set ids = current_user.followings.split(', ') %}
                     {% set list1 = user.followers.split(', ') %}
                     {% set user_id_ = current_user.id | string() %}
 
-                    <a href="/message/{{ user.id }}">
-                        <li class="clearfix">
+                    <a href="/message/{{ user.id }}" style="text-decoration: none;">
+                        <li class="clearfix" style="border: 1px solid grey;">
                             <img src="../static/avatars/{{user.image}}" alt="avatar">
                             <div class="about">
-                                <div class="name" style="color: white;">{{user.name}}</div>
+                                <div class="name" style="color: white; margin-left: 60px; margin-top: 12px;">{{user.name}}</div>
                             </div>
                         </li>
                     </a>
@@ -31,9 +26,10 @@
                 </ul>
             </div>
             <div class="chat" style="max-height: 50%;">
-                <div>
-                    <h1 style="color: white;margin-left: auto; margin-right: auto; display: flex; justify-content: center;">
-                        Choose who you would like to write to</h1>
+                <div class="choose__text">
+                    <div class="alert alert alert-dark" role="alert" style="color: white; background-color: #22272e">
+                        Сhoose who you would like to write to
+                    </div>
                 </div>
             </div>
         </div>

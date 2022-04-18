@@ -241,7 +241,7 @@ def message_id(user_id):
             )
             db_sess.add(message_user)
             db_sess.commit()
-        return redirect(f"/message/{user_id}", user=user)
+        return redirect(f"/message/{user_id}")
 
     else:
         db_sess = db_session.create_session()
@@ -372,7 +372,7 @@ def friends():
     if request.method == 'POST':
         data = request.form
         input_name = data['friends_search']
-        users = db_sess.query(User).filter(User.name.like(input_name)).filter(User.id != current_user.id).all()
+        users = db_sess.query(User).filter(User.name.like(f"%{input_name}%")).filter(User.id != current_user.id).all()
     else:
         users = db_sess.query(User).filter(User.id != current_user.id).all()
 
