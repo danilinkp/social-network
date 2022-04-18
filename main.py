@@ -513,7 +513,7 @@ def admin_list():
                 db_sess.commit()
                 return redirect('/admin/admins')
             else:
-                return render_template('admin.html', id_for_edit=id, edit_user='not is none', message='Error position', pos=pos)
+                return render_template('admin.html', id_for_edit=id, edit_user='not is none', message='Wrong position', pos=pos)
         if 'new_admin' in list(dict(request.form).keys())[0]:
             return render_template('admin.html', new_admin='not is none', pos=pos)
         if 'user_name' in list(dict(request.form).keys())[0]:
@@ -521,14 +521,14 @@ def admin_list():
             admin_new = db_sess.query(User).filter(User.name == request.form['user_name']).first()
 
             if not admin_new:
-                return render_template('admin.html', new_admin='not is none', message='not user', pos=pos)
+                return render_template('admin.html', new_admin='not is none', message='Wrong user', pos=pos)
             id = admin_new.id
             admin_new1 = db_sess.query(Admin).filter(Admin.user_id == admin_new.id).first()
 
             if admin_new1:
-                return render_template('admin.html', new_admin='not is none', message='Уже есть', pos=pos)
+                return render_template('admin.html', new_admin='not is none', message='The user is already an admin', pos=pos)
             if request.form['user_position'] != 'common' and request.form['user_position'] != 'general':
-                return render_template('admin.html', new_admin='not is none', message='bad position', pos=pos)
+                return render_template('admin.html', new_admin='not is none', message='Wrong position', pos=pos)
             admin_new2 = db_sess.query(User).filter(User.id == id).first()
             admin_new2.admin_check = 1
             user = Admin(
@@ -640,6 +640,7 @@ def follow_user(user_id):
 @app.route('/message/', methods=['GET', 'POST'])
 @login_required
 def message():
+
     db_sess = db_session.create_session()
     friends = db_sess.query(User).filter(current_user.id != User.id).all()
     return render_template('messages_friends.html', friends=friends)
