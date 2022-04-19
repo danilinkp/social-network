@@ -13,14 +13,14 @@
                         {% set list1 = friend.followers.split(', ') %}
                         {% set user_id_ = current_user.id | string() %}
                             {% if friend.id | string() in ids%}
-                        <a href="/message/{{ user.id }}" style="text-decoration: none;">
-                            <li class="clearfix" style="border: 1px solid;">
-                                <img src="../static/avatars/{{user.image}}" alt="avatar">
-                                    <div class="about">
-                                        <div class="name" style="color: white;" >{{friend.name}}</div>
-                                    </div>
-                            </li>
-                        </a>
+                                <a href="/message/{{ friend.id }}" style="text-decoration: none;">
+                                    <li class="clearfix" style="border: 1px solid;">
+                                        <img src="../static/avatars/{{user.image}}" alt="avatar">
+                                            <div class="about">
+                                                <div class="name" style="color: white;" >{{friend.name}}</div>
+                                            </div>
+                                    </li>
+                                </a>
                             {% endif %}
                         {% endfor %}
                     </ul>
