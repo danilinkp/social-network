@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request, session, url_for, send_from_directory, jsonify
 from werkzeug.utils import redirect
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -14,6 +16,8 @@ from flask_avatars import Avatars
 import os
 import requests
 import random
+
+from waitress import serve
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__name__))
@@ -809,9 +813,10 @@ def delete_account():
 
 
 def main():
-
     """ Запуск сервера"""
-    app.run(port=8080, host='127.0.0.1')
+    port = int(os.environ.get("PORT", 5000))
+    # app.run(host='0.0.0.0', port=port)
+    serve(app, host='0.0.0.0', port=port)
 
 
 if __name__ == '__main__':
