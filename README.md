@@ -43,5 +43,7 @@ Ruda: social-network
 https://www.canva.com/design/DAE-dKrwI7I/GnS3ZSw2Kp3truyqq2uBvQ/view#4
 
 
+http://flask-ruda.herokuapp.com
+
 
 
