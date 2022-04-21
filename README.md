@@ -40,6 +40,8 @@ Ruda: social-network
 
 [:arrow_up:Оглавление](#Оглавление)
 
+https://www.canva.com/design/DAE-dKrwI7I/GnS3ZSw2Kp3truyqq2uBvQ/view#4
+
 
 
 
