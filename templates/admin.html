@@ -94,7 +94,7 @@
                                                     class="number1">{{ admin1.position}}</span></div>
                                         </div>
                                         <div class="buttons__block">
-                                            {% if pos.position == 'general' %}
+                                            {% if pos.position == 'general' and current_user.id != admin1.user_id %}
 
 
                                                 <button class="btn btn-sm btn-danger w-100" name="delete_user-{{admin1.user.id}}">Delete
@@ -142,10 +142,12 @@
                                             class="number3">{% if user.followings %} {{ids|length}} {% else %} 0 {% endif %}</span></div>
                                 </div>
                                 <div class="buttons__block">
+                                    {% if current_user.id != user.id %}
 
 
-                                    <button class="btn btn-sm btn-danger w-100" name="delete_user-{{user.id}}">Delete
-                                    </button>
+                                        <button class="btn btn-sm btn-danger w-100" name="delete_user-{{user.id}}">Delete
+                                        </button>
+                                    {% endif %}
 
 
                                 </div>
