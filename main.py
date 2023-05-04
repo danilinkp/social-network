@@ -590,6 +590,7 @@ def news():
 
             response = requests.get(url)
             posts_api = response.json()['articles']
+
             posts = []
     else:
         friends = current_user.followings.split(', ')
@@ -677,13 +678,12 @@ def message():
 def new():
     """ Реализация ботов """
     db_sess = db_session.create_session()
-    for i in range(200, 213):
-        user = User(
-            name=f'{i}hjkh32432jhjk',
-            email=f"32324{i}432@@@"
-        )
-        user.set_password(f'{i}233223')
-        db_sess.add(user)
+    user = User(
+        name=f'dab dab',
+        email=f"aaa@aaa"
+    )
+    user.set_password(f'123')
+    db_sess.add(user)
     db_sess.commit()
 
 
@@ -816,7 +816,6 @@ def main():
     """ Запуск сервера"""
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)
-
 
 
 if __name__ == '__main__':

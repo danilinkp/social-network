@@ -3,7 +3,7 @@ import smtplib
 
 def send_email(message, email):
     sender = 'rudasocialnet@gmail.com'
-    password = 'ruda2005'
+    password = 'unsldsybczcdmgqt'
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     try:
@@ -11,5 +11,5 @@ def send_email(message, email):
         server.sendmail(sender, email, message)
 
         print(message)
-    except Exception as  _ex:
+    except Exception as _ex:
         print(_ex)
